@@ -65,7 +65,7 @@ https://github.com/cxDosx/FenFu
 ✨!bind
 ✨!unbind
 ✨!me
-饿了别叫🐴
+✨饿了别叫🐴
         """.trimIndent()
     }
 
