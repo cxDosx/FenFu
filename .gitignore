@@ -1,0 +1,6 @@
+/src/main/kotlin/moe/cxdosx/fenfu/config/BotConfig.kt
+/.idea/
+/build/
+device.json
+# Project exclude paths
+/.gradle/
