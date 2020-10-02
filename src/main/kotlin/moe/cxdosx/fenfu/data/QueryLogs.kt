@@ -5,25 +5,20 @@ import com.google.gson.reflect.TypeToken
 import moe.cxdosx.fenfu.config.BotConfig
 import moe.cxdosx.fenfu.config.FenFuText
 import moe.cxdosx.fenfu.utils.DatabaseHelper
+import moe.cxdosx.fenfu.utils.HttpUtil
 import moe.cxdosx.fenfu.utils.LogsUtil
 import net.mamoe.mirai.message.GroupMessageEvent
-import okhttp3.OkHttpClient
 import okhttp3.Request
 import org.example.myplugin.beans.LogsDataQuery
 import org.example.myplugin.beans.LogsUserQuery
 import java.net.URLEncoder
-import java.util.concurrent.TimeUnit
 
 
 class QueryLogs {
     companion object {
         private const val API_KEY = BotConfig.ffLogsApiKey
         private val refererHeaderMap = HashMap<String, String>()
-        private val client = OkHttpClient.Builder()
-            .callTimeout(10, TimeUnit.SECONDS)
-            .connectTimeout(10, TimeUnit.SECONDS)
-            .readTimeout(10, TimeUnit.SECONDS)
-            .writeTimeout(10, TimeUnit.SECONDS).build()
+
     }
 
     init {
@@ -41,7 +36,7 @@ class QueryLogs {
         for (key in refererHeaderMap.keys) {
             request.addHeader(key, refererHeaderMap[key].toString())
         }
-        val execute = client.newCall(request.build()).execute()
+        val execute = HttpUtil.client.newCall(request.build()).execute()
         if (execute.isSuccessful && execute.body != null) {
             val str = execute.body?.string()
             if (str.equals("[]")) {
@@ -51,7 +46,7 @@ class QueryLogs {
             val users: ArrayList<LogsUserQuery> = try {
                 Gson().fromJson(str, object : TypeToken<List<LogsUserQuery>>() {}.type)
             } catch (e: Exception) {
-                groupMessageEvent.reply(FenFuText.parseDataError(e.localizedMessage + "\nData=$str"))
+                groupMessageEvent.reply(FenFuText.parseDataError(e.localizedMessage + "\n$str"))
                 return
             }
             val removeList = ArrayList<LogsUserQuery>()
@@ -116,15 +111,16 @@ class QueryLogs {
 
     /**
      * 寻找角色，但此方法返回的是角色对象的列表，如果只有一个，size=1
+     * 如果数据异常，也只会返回一个，但是服务器名会为FenFuError
      */
-    suspend fun queryUser(userName: String): List<LogsUser> {
+    fun queryUser(userName: String): List<LogsUser> {
         val url = "https://cn.fflogs.com/search/autocomplete?term=${URLEncoder.encode(userName, "UTF-8")}"
         val request = Request.Builder()
             .url(url)
         for (key in refererHeaderMap.keys) {
             request.addHeader(key, refererHeaderMap[key].toString())
         }
-        val execute = client.newCall(request.build()).execute()
+        val execute = HttpUtil.client.newCall(request.build()).execute()
         if (execute.isSuccessful && execute.body != null) {
             val str = execute.body?.string()
             if (str.equals("[]")) {
@@ -171,7 +167,19 @@ class QueryLogs {
                 }
             }
         } else {
-            return ArrayList()
+            val errorList = ArrayList<LogsUser>()
+            val msg = if (execute.body != null) {
+                execute.body!!.string()
+            } else {
+                execute.code.toString()
+            }
+            errorList.add(
+                LogsUser(
+                    msg,
+                    FenFuText.fenfuErrorMsg
+                )
+            )
+            return errorList
         }
     }
 
@@ -199,16 +207,16 @@ class QueryLogs {
         for (key in refererHeaderMap.keys) {
             request.addHeader(key, refererHeaderMap[key].toString())
         }
-        val response = client.newCall(request.build()).execute()
+        val response = HttpUtil.client.newCall(request.build()).execute()
         if (response.code == 400) {
-            return FenFuText.notFoundLogsData(userName, serverName, zoneId)
+            return FenFuText.notFoundLogsData(userName, serverName, zoneId, hps) + "\n${response.body?.string()}"
         }
         if (response.isSuccessful && response.body != null) {
             val str = response.body?.string()
             val logsData: ArrayList<LogsDataQuery> = try {
                 Gson().fromJson(str, object : TypeToken<List<LogsDataQuery>>() {}.type)
             } catch (e: Exception) {
-                return FenFuText.parseDataError(e.localizedMessage + "\nData=$str")
+                return FenFuText.parseDataError(e.localizedMessage + "\n$str")
             }
             val defaultDifficult = DatabaseHelper.instance.getDungeonDifficult(zoneId)
             if (defaultDifficult == -1) {
@@ -218,13 +226,20 @@ class QueryLogs {
                 for (element in logsData) {
                     if (element.difficulty != defaultDifficult) {
                         removeArray.add(element)
+                        continue
+                    }
+                    if (hps) {
+                        if (!DatabaseHelper.instance.jobIsHealer(element.spec)) {
+                            removeArray.add(element)
+                            continue
+                        }
                     }
                 }
                 for (e in removeArray) {
                     logsData.remove(e)
                 }
                 if (logsData.isEmpty()) {
-                    return FenFuText.notFoundLogsData(userName, serverName, zoneId)
+                    return FenFuText.notFoundLogsData(userName, serverName, zoneId, hps)
                 } else {
                     val resultStringBuffer = StringBuffer(
                         "$userName - $serverName 的战斗报告\n区域：${

@@ -1,8 +1,10 @@
 package moe.cxdosx.fenfu
 
 import moe.cxdosx.fenfu.config.BotConfig
-import net.mamoe.mirai.*
 import moe.cxdosx.fenfu.function.*
+import net.mamoe.mirai.Bot
+import net.mamoe.mirai.alsoLogin
+import net.mamoe.mirai.join
 
 suspend fun main() {
     val bot = Bot(
@@ -19,6 +21,7 @@ suspend fun main() {
         queryHpsLogs()
         userBind()
         atBotLogs()
+        market()
     }
 
     bot.join()

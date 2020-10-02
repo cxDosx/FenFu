@@ -18,6 +18,12 @@ fun Bot.userBind(){
                 val split = msg.split(" ")
                 if (split.size == 2) {
                     val queryUser = QueryLogs().queryUser(split[1])
+                    if (queryUser.size == 1 && queryUser[0].serverName == FenFuText.fenfuErrorMsg) {
+                        reply(
+                            At(sender) + "\n数据处理异常\n${queryUser[0].userName}"
+                        )
+                        return@regex
+                    }
                     if (queryUser.isEmpty()) {
                         reply(
                             At(sender) + "\n" + FenFuText.logsUserQueryEmpty
@@ -70,12 +76,12 @@ fun Bot.userBind(){
                     }
                 } else {
                     reply(
-                        At(sender) + "\n" + FenFuText.bindHelp()
+                        At(sender) + "\n" + FenFuText.bindHelp
                     )
                 }
             } else {
                 reply(
-                    At(sender) + "\n" + FenFuText.bindHelp()
+                    At(sender) + "\n" + FenFuText.bindHelp
                 )
             }
 

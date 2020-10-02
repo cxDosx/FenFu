@@ -41,6 +41,12 @@ fun Bot.queryLogs(){
                          * 假设第三位是副本名
                          */
                         val queryUser = QueryLogs().queryUser(split[1])
+                        if (queryUser.size == 1 && queryUser[0].serverName == FenFuText.fenfuErrorMsg) {
+                            reply(
+                                At(sender) + "\n数据处理异常\n${queryUser[0].userName}"
+                            )
+                            return@regex
+                        }
                         if (queryUser.isEmpty()) { //没找到User
                             reply(
                                 At(sender) + "\n" + FenFuText.logsUserQueryEmpty
@@ -85,7 +91,7 @@ fun Bot.queryLogs(){
                     }
                 }
             } else {
-                reply(At(sender) + "\n" + FenFuText.logsHelp())
+                reply(At(sender) + "\n" + FenFuText.logsHelp)
             }
         }
     }

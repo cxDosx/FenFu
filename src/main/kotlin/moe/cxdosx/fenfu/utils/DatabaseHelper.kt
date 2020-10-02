@@ -1,6 +1,7 @@
 package moe.cxdosx.fenfu.utils
 
 import moe.cxdosx.fenfu.config.BotConfig
+import moe.cxdosx.fenfu.config.FenFuText
 import moe.cxdosx.fenfu.data.LogsUser
 import java.sql.Connection
 import java.sql.DriverManager
@@ -14,6 +15,10 @@ class DatabaseHelper {
         const val JDBC_MYSQL_URL = BotConfig.jdbcUrl
 
         val instance: DatabaseHelper by lazy { DatabaseHelper() }
+
+        const val LuXingNiao = "LuXingNiao"
+        const val MoGuLi = "MoGuLi"
+        const val MaoXiaoPang = "MaoXiaoPang"
     }
 
     enum class JobType(var typeId: Int) {
@@ -69,6 +74,59 @@ class DatabaseHelper {
             return executeQuery.getString("serverName")
         }
         return ""
+    }
+
+
+    /**
+     * 获取服务器的英文名称
+     * 主要用于中文服务器转英文
+     */
+    fun queryENServerName(serverName: String): String {
+        var serverEN = ""
+        if (Regex(FenFuText.regexAnything("鸟", "一区", "陆行鸟"), RegexOption.IGNORE_CASE) matches serverName) {
+            serverEN = LuXingNiao
+        } else if (Regex(
+                FenFuText.regexAnything("猪", "二区", "莫古力", "蘑菇力"),
+                RegexOption.IGNORE_CASE
+            ) matches serverName
+        ) {
+            serverEN = MoGuLi
+        } else if (Regex(FenFuText.regexAnything("猫", "三区", "猫小胖"), RegexOption.IGNORE_CASE) matches serverName) {
+            serverEN = MaoXiaoPang
+        } else {
+            val sql = "SELECT serverNameEN FROM ffxiv_server_info WHERE serverName LIKE '%$serverName%'"
+            val executeQuery = stmt.executeQuery(sql)
+            if (executeQuery.next()) {
+                return executeQuery.getString("serverNameEN")
+            }
+        }
+        return serverEN
+    }
+
+    /**
+     * 获取服务器中文名
+     */
+    fun queryCNServerName(en: String): String {
+        return when (en) {
+            LuXingNiao -> {
+                "陆行鸟"
+            }
+            MoGuLi -> {
+                "莫古力"
+            }
+            MaoXiaoPang -> {
+                "猫小胖"
+            }
+            else -> {
+                val sql = "SELECT serverName FROM ffxiv_server_info WHERE serverNameEN = '$en'"
+                val executeQuery = stmt.executeQuery(sql)
+                if (executeQuery.next()) {
+                    executeQuery.getString("serverName")
+                } else {
+                    en
+                }
+            }
+        }
     }
 
     enum class LogsQueryType {

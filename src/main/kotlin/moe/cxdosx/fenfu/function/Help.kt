@@ -9,7 +9,7 @@ fun Bot.help() {
     subscribeGroupMessages {
         Regex(FenFuText.regexMatch("help", "帮助"), RegexOption.IGNORE_CASE) matching regex@{
             reply(
-                At(sender) + "\n" + FenFuText.help()
+                At(sender) + "\n" + FenFuText.help
             )
         }
     }
