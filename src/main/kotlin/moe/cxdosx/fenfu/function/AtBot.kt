@@ -1,8 +1,8 @@
 package moe.cxdosx.fenfu.function
 
 import moe.cxdosx.fenfu.config.FenFuText
-import moe.cxdosx.fenfu.data.LogsIdle
-import moe.cxdosx.fenfu.data.LogsIdleQueue
+import moe.cxdosx.fenfu.data.beans.LogsIdle
+import moe.cxdosx.fenfu.data.beans.LogsIdleQueue
 import moe.cxdosx.fenfu.data.QueryLogs
 import moe.cxdosx.fenfu.utils.DatabaseHelper
 import net.mamoe.mirai.Bot

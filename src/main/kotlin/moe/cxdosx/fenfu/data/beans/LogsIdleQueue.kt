@@ -1,4 +1,6 @@
-package moe.cxdosx.fenfu.data
+package moe.cxdosx.fenfu.data.beans
+
+import moe.cxdosx.fenfu.data.beans.LogsIdle
 
 /**
  * Logs查询的等待回复队列

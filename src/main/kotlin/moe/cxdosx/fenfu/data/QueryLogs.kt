@@ -4,6 +4,9 @@ import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import moe.cxdosx.fenfu.config.BotConfig
 import moe.cxdosx.fenfu.config.FenFuText
+import moe.cxdosx.fenfu.data.beans.LogsIdle
+import moe.cxdosx.fenfu.data.beans.LogsIdleQueue
+import moe.cxdosx.fenfu.data.beans.LogsUser
 import moe.cxdosx.fenfu.utils.DatabaseHelper
 import moe.cxdosx.fenfu.utils.HttpUtil
 import moe.cxdosx.fenfu.utils.LogsUtil

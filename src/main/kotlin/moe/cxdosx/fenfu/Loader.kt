@@ -16,12 +16,13 @@ suspend fun main() {
 
     bot.apply {
         help()
-        csm()
-        queryLogs()
-        queryHpsLogs()
-        userBind()
-        atBotLogs()
-        market()
+        csm() //今天吃什么
+        queryLogs() //logs查询
+        queryHpsLogs() //hps logs查询
+        userBind() //用户角色绑定
+        atBotLogs() //logs多项选择
+        market() //市场查价
+        title() //称号查询
     }
 
     bot.join()

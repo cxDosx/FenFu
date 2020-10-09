@@ -1,4 +1,4 @@
-package moe.cxdosx.fenfu.data
+package moe.cxdosx.fenfu.data.beans
 
 /**
  * 查询实体

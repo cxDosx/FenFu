@@ -2,7 +2,7 @@ package moe.cxdosx.fenfu.utils
 
 import moe.cxdosx.fenfu.config.BotConfig
 import moe.cxdosx.fenfu.config.FenFuText
-import moe.cxdosx.fenfu.data.LogsUser
+import moe.cxdosx.fenfu.data.beans.LogsUser
 import java.sql.Connection
 import java.sql.DriverManager
 import java.sql.Statement
@@ -272,4 +272,5 @@ class DatabaseHelper {
         }
         return o.trim()
     }
+
 }

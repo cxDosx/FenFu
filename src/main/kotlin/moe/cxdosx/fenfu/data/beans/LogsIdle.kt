@@ -1,4 +1,4 @@
-package moe.cxdosx.fenfu.data
+package moe.cxdosx.fenfu.data.beans
 
 import net.mamoe.mirai.message.GroupMessageEvent
 
