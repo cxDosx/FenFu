@@ -23,7 +23,7 @@ const val defaultQueryServer = "LuXingNiao"
 
 fun Bot.market() {
     subscribeGroupMessages {
-        Regex(FenFuText.regexMatch("market", "m", "mitem", "查价", "价格", "市场"), RegexOption.IGNORE_CASE) matching regex@{
+        Regex(FenFuText.regexMatch("market", "mitem", "查价", "价格", "市场"), RegexOption.IGNORE_CASE) matching regex@{
             val msg = it.replace(" +", " ").trim()//防止憨批打两个空格
             if (msg.contains(" ")) {
                 val split = msg.split(" ")
