@@ -31,16 +31,12 @@ object FenFuText {
     }
 
     val logsHelp = """
-            分福阶段性更新中，如遇问题请联系开发者->QQ 591701074
             使用查询命令必须使用!或者/开头
             其中*号为可填项
             查询某人的dps logs：!logs 用户名 服务器名* 副本名*
             查询某人的hps logs：!hps 用户名 服务器名* 副本名*
             查询自己的dps logs：!me 副本名*
             查询自己的hps logs：!mehps 副本名*
-            =================================================
-            logs功能已基本完成所有功能，你可以使用!bind来绑定自己的角色
-            然后使用指令查询：!me 副本名*
         """.trimIndent()
 
     val bindHelp = """
@@ -84,8 +80,22 @@ https://github.com/cxDosx/FenFu
 ✨!unbind
 ✨!me
 ✨!market
+✨!title
 ✨饿了别叫🐴
         """.trimIndent()
+
+    val titleHelp = """
+        称号查询
+        你可以通过对应的称号名称来查询相应的获取方法
+        使用方法：
+        !title 樱花公主
+        !title 吉吉
+        可选命令头：
+        !title
+        !称号
+        ================
+        称号支持模糊查询
+    """.trimIndent()
 
     fun parseDataError(errMsg: String?): String {
         return "数据没办法处理了，请联系开发者T_T${if (errMsg.isNullOrEmpty()) "" else "\n$errMsg"}"
