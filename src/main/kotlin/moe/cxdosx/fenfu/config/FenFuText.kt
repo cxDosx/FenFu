@@ -103,7 +103,7 @@ object FenFuText {
     """.trimIndent()
 
     fun parseDataError(errMsg: String?): String {
-        return "数据没办法处理了，请联系开发者T_T${if (errMsg.isNullOrEmpty()) "" else "\n$errMsg"}"
+        return "连接分福数据发生了错误（2002）${if (errMsg.isNullOrEmpty()) "" else "\n$errMsg"}"
     }
 
     /**
@@ -114,7 +114,7 @@ object FenFuText {
     }
 
     fun queryDifficultIdError(): String {
-        return "分福坏掉了QAQ\nErrMsg:Difficult Code request failed!"
+        return "分福陷入了“濒死”效果，身体很虚弱，力量、灵巧、智力、精神均降低50%。\nErrMsg:Difficult Code request failed!"
     }
 
     /**
