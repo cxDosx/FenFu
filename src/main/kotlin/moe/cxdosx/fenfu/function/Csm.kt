@@ -13,7 +13,7 @@ fun Bot.csm() {
          */
         Regex(FenFuText.randomFoodRegex, RegexOption.IGNORE_CASE) matching regex@{
             if (sender.id != bot.id) {
-                reply(At(sender) + "\n" + FenFuText.randomFood(DatabaseHelper.instance.getRandomFood()))
+                reply(FenFuText.randomFood(sender, DatabaseHelper.instance.getRandomFood()).asMessageChain())
             }
         }
 
@@ -57,7 +57,7 @@ fun Bot.csm() {
                 }
             } else {
                 if (sender.id != bot.id) {
-                    reply(At(sender) + "\n" + FenFuText.randomFood(DatabaseHelper.instance.getRandomFood()))
+                    reply(FenFuText.randomFood(sender, DatabaseHelper.instance.getRandomFood()).asMessageChain())
                 }
             }
         }

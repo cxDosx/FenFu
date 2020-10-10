@@ -1,6 +1,9 @@
 package moe.cxdosx.fenfu.config
 
 import moe.cxdosx.fenfu.utils.DatabaseHelper
+import net.mamoe.mirai.contact.Member
+import net.mamoe.mirai.message.data.At
+import net.mamoe.mirai.message.data.MessageChainBuilder
 
 object FenFuText {
 
@@ -26,8 +29,13 @@ object FenFuText {
     const val matchNumber: String = "^[1-9]\\d*\$"
 
 
-    fun randomFood(str: String): String {
-        return "经过我精密的推算，你适合吃 $str"
+    fun randomFood(sender: Member, foodName: String): MessageChainBuilder {
+        return MessageChainBuilder()
+            .append("分福发动了“抽卡”。")
+            .append("\n")
+            .append("▷ 对")
+            .append(At(sender))
+            .append("的胃附加了“$foodName”的效果。")
     }
 
     val logsHelp = """
