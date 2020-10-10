@@ -11,6 +11,7 @@ import moe.cxdosx.fenfu.utils.DatabaseHelper
 import moe.cxdosx.fenfu.utils.HttpUtil
 import moe.cxdosx.fenfu.utils.LogsUtil
 import net.mamoe.mirai.message.GroupMessageEvent
+import net.mamoe.mirai.message.data.At
 import okhttp3.Request
 import org.example.myplugin.beans.LogsDataQuery
 import org.example.myplugin.beans.LogsUserQuery
@@ -43,7 +44,7 @@ class QueryLogs {
         if (execute.isSuccessful && execute.body != null) {
             val str = execute.body?.string()
             if (str.equals("[]")) {
-                groupMessageEvent.reply(FenFuText.logsUserQueryEmpty)
+                groupMessageEvent.reply(At(groupMessageEvent.sender) + "\n" + FenFuText.logsUserQueryEmpty)
                 return
             }
             val users: ArrayList<LogsUserQuery> = try {
@@ -67,7 +68,7 @@ class QueryLogs {
             }
             when {
                 users.isEmpty() -> {
-                    groupMessageEvent.reply(FenFuText.logsUserQueryEmpty)
+                    groupMessageEvent.reply(At(groupMessageEvent.sender) + "\n" + FenFuText.logsUserQueryEmpty)
                     return /*FenFuText.logsUserQueryEmpty*/
                 }
                 users.size == 1 -> {

@@ -27,7 +27,7 @@ fun Bot.csm() {
                 if (split.size == 2 && split[1].toLowerCase() == "list") {
                     reply(At(sender) + "\n当前随机列表含有：\n${DatabaseHelper.instance.outputAllFoodName()}")
                 } else if (split.size >= 3 && split[1].toLowerCase() == "add") {
-                    val foodName = msg.substring(msg.indexOf(" ")).trim()
+                    val foodName = msg.substring(msg.indexOf(" ", msg.indexOf(" ") + 1)).trim()
                     if (foodName.contains("食物名")) {
                         reply(At(sender) + "\n?¿?¿?¿?¿?¿?¿?¿?¿?¿?¿?¿?¿?¿?¿?¿?¿?¿?¿?¿?¿")
                         return@regex
@@ -40,7 +40,7 @@ fun Bot.csm() {
                         reply(At(sender) + "\n已存在有类似的食物名：$checkFood")
                     }
                 } else if (split.size >= 3 && split[1].toLowerCase() == "fadd") {
-                    val foodName = msg.substring(msg.indexOf(" ")).trim()
+                    val foodName = msg.substring(msg.indexOf(" ", msg.indexOf(" ") + 1)).trim()
                     if (foodName.contains("食物名")) {
                         reply(At(sender) + "\n?¿?¿?¿?¿?¿?¿?¿?¿?¿?¿?¿?¿?¿?¿?¿?¿?¿?¿?¿?¿")
                         return@regex

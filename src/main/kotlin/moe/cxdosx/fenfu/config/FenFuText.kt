@@ -1,6 +1,5 @@
 package moe.cxdosx.fenfu.config
 
-import moe.cxdosx.fenfu.utils.DatabaseHelper
 import net.mamoe.mirai.contact.Member
 import net.mamoe.mirai.message.data.At
 import net.mamoe.mirai.message.data.MessageChainBuilder
@@ -10,7 +9,7 @@ object FenFuText {
     const val fenfuErrorMsg = "FenFuError"
 
     const val serverError = "前方区域繁忙，请稍后再试。"
-    const val logsUserQueryEmpty = "没有找到相关光战的信息呢=_="
+    const val logsUserQueryEmpty = "゛﹎碴璑泚亽つ。※"
     const val randomFoodRegex = ".*(吃饭|吃什么|饿了|饭点).*"
     const val notFoundBindUser = "你还没有绑定角色，你可以使用!bind来绑定你的角色"
     val foodHelp = """
@@ -45,6 +44,7 @@ object FenFuText {
             查询某人的hps logs：!hps 用户名 服务器名* 副本名*
             查询自己的dps logs：!me 副本名*
             查询自己的hps logs：!mehps 副本名*
+            ※ hps为治疗职业限定
         """.trimIndent()
 
     val bindHelp = """
@@ -60,7 +60,7 @@ object FenFuText {
     val marketHelp = """
         查询全服板子价格工具Market
         使用方法(*为选填，默认鸟区)：
-        !market [物品名称] [服务器或大区名*]
+        !market 物品名称 服务器或大区名*
         你可以在物品名称前后增加大小写不定的HQ或NQ来限制搜索结果
         使用示例：
         !market 黑天马 陆行鸟
@@ -106,20 +106,22 @@ object FenFuText {
         return "数据没办法处理了，请联系开发者T_T${if (errMsg.isNullOrEmpty()) "" else "\n$errMsg"}"
     }
 
+    /**
+     * TODO 传参保留一个版本，下个版本删除
+     */
     fun notFoundLogsData(userName: String, serverName: String, zoneId: Int, hps: Boolean): String {
-        return if (hps) {
-            "没有找到[$serverName]${userName}在${DatabaseHelper.instance.zoneIdQueryDungeonName(zoneId)}的相关副本治疗职业的hps记录"
-        } else {
-            "没有找到[$serverName]${userName}在${DatabaseHelper.instance.zoneIdQueryDungeonName(zoneId)}的相关副本logs记录"
-        }
+        return "这个人很懒，什么都没有留下。"
     }
 
     fun queryDifficultIdError(): String {
         return "分福坏掉了QAQ\nErrMsg:Difficult Code request failed!"
     }
 
+    /**
+     * TODO 传参保留一个版本，下个版本删除
+     */
     fun notFoundAreaId(bossOrAreaName: String): String {
-        return "没有找到有关于 $bossOrAreaName 的相关副本信息"
+        return "分福没听说过有这个副本"
     }
 
     fun regexMatch(vararg command: String): String {
@@ -150,7 +152,11 @@ object FenFuText {
         return "呜呜，“${value}”太多了！分福找不到你\n请加上区服重新绑定"
     }
 
+    /**
+     * TODO 传参保留一个版本，下个版本删除
+     * 该参数已有空值传入
+     */
     fun unKnowServerName(value: String): String {
-        return "无法识别的服务器名称：$value"
+        return "分福没听说过有这个服务器"
     }
 }

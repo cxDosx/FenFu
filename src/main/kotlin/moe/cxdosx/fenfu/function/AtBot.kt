@@ -76,11 +76,12 @@ private suspend fun queryIdleQueue(messageEvent: GroupMessageEvent, content: Str
         }
         if (userName.isNotEmpty() && serverName.isNotEmpty()) {
             messageEvent.reply(
-                QueryLogs().queryLogsData(
-                    userName,
-                    serverName,
-                    DatabaseHelper.instance.getDefaultQueryZone()
-                )
+                At(messageEvent.sender) + "\n" +
+                        QueryLogs().queryLogsData(
+                            userName,
+                            serverName,
+                            DatabaseHelper.instance.getDefaultQueryZone()
+                        )
             )
         }
     }

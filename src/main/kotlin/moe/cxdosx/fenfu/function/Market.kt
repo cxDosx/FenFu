@@ -37,7 +37,7 @@ fun Bot.market() {
                         when (item.ID) {
                             MARKET_ID_EMPTY -> {
                                 reply(
-                                    At(sender) + "\n没有找到类似于${split[1]}的相关物品，请检查关键字后重试"
+                                    At(sender) + "\n没有发现包含“${split[1]}”的道具"
                                 )
                             }
                             MARKET_ID_ERROR -> {
@@ -54,19 +54,19 @@ fun Bot.market() {
                     val enServerName = DatabaseHelper.instance.queryENServerName(split[2])
                     if (enServerName.isEmpty()) {
                         reply(
-                            At(sender) + "\n服务器名无效"
+                            At(sender) + "\n${FenFuText.unKnowServerName("")}"
                         )
                     } else { //询价
                         val item = queryItemId(split[1])
                         when (item.ID) {
                             MARKET_ID_EMPTY -> {
                                 reply(
-                                    At(sender) + "\n没有找到类似于${split[1]}的相关物品，请检查关键字后重试"
+                                    At(sender) + "\n没有发现包含“${split[1]}”的道具"
                                 )
                             }
                             MARKET_ID_ERROR -> {
                                 reply(
-                                    At(sender) + "\n无法请求到物品ID数据，服务器可能异常，请稍后再试"
+                                    At(sender) + "\n请求物品ID数据发生了错误（90002）"
                                 )
                             }
                             else -> {
