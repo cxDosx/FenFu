@@ -5,6 +5,7 @@ import moe.cxdosx.fenfu.utils.DatabaseHelper
 import net.mamoe.mirai.Bot
 import net.mamoe.mirai.event.subscribeGroupMessages
 import net.mamoe.mirai.message.data.At
+import net.mamoe.mirai.message.data.Face
 
 /**
  * 称号查询系统
@@ -23,37 +24,51 @@ fun Bot.title() {
                             At(sender) + "\n没有找到有关${queryTitle}的称号"
                         )
                     } else {
-                        val sb = StringBuffer()
+                        var messageChain = At(sender) + "\n"
                         if (titleBean.titleName.contains("/")){
                             val titleNameSplit = titleBean.titleName.split("/")
                             for ((index, element) in titleNameSplit.withIndex()){
-                                if (index % 2 == 0){
-                                    sb.append("\uD83D\uDC66\uD83C\uDFFB") //Boy
+                                messageChain = if (index % 2 == 0){
+                                    messageChain.plus("\uD83D\uDC66\uD83C\uDFFB") //Boy
                                 } else{
-                                    sb.append("\uD83D\uDC67\uD83C\uDFFB") //Girl
+                                    messageChain.plus("\uD83D\uDC67\uD83C\uDFFB") //Girl
                                 }
-                                sb.append("[${element.trim()}]")
-                                sb.append("\n")
+                                messageChain = messageChain.plus("<‹${element.trim()}›>")
+                                if (index != titleNameSplit.size - 1){
+                                    messageChain = messageChain.plus("｜")
+                                }
                             }
+                            messageChain = messageChain
+                                .plus("\n")
                         } else{
-                            sb.append("[${titleBean.titleName}]").append("\n")
+                            messageChain = messageChain
+                                .plus("<‹${titleBean.titleName}›>")
+                                .plus("\n")
                         }
-                        sb.append("关联成就：${titleBean.achievement}").append("\n")
                         if (titleBean.oop){
-                            sb.append("==该称号已绝版==").append("\n")
+                            messageChain = messageChain
+                                .plus("※ 该称号已绝版！")
+                                .plus(Face(Face.kuaikule))
+                                .plus("\n")
                         }
-                        sb.append("获取途径：")
-                        if (titleBean.desc.isEmpty()){
-                            sb.append(titleBean.descAll)
+                        messageChain = messageChain
+                            .plus("——————————\n")
+                            .plus("关联成就：${titleBean.achievement}")
+                            .plus("\n")
+                            .plus("获取途径：")
+                        messageChain = if (titleBean.desc.isEmpty()){
+                            messageChain.plus(titleBean.descAll)
                         } else{
-                            sb.append(titleBean.desc)
+                            messageChain.plus(titleBean.desc)
                         }
                         if (titleBean.aboutLink.isNotEmpty()){
-                            sb.append("\n")
-                            sb.append("相关链接：").append(titleBean.aboutLink)
+                            messageChain = messageChain
+                                .plus("\n")
+                                .plus("相关链接：")
+                                .plus(titleBean.aboutLink)
                         }
                         reply(
-                            At(sender) + "\n$sb"
+                            messageChain
                         )
                     }
                 } else {
