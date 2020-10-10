@@ -274,7 +274,7 @@ class DatabaseHelper {
         return o.trim()
     }
 
-    fun queryTitle(likeName: String):TitleBean? {
+    fun queryTitle(likeName: String): TitleBean? {
         val sql = "SELECT * FROM ffxiv_title WHERE `name` LIKE '%$likeName%' LIMIT 1"
         val executeQuery = stmt.executeQuery(sql)
         while (executeQuery.next()) {

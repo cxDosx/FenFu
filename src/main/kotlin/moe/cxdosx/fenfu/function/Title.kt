@@ -25,27 +25,27 @@ fun Bot.title() {
                         )
                     } else {
                         var messageChain = At(sender) + "\n"
-                        if (titleBean.titleName.contains("/")){
+                        if (titleBean.titleName.contains("/")) {
                             val titleNameSplit = titleBean.titleName.split("/")
-                            for ((index, element) in titleNameSplit.withIndex()){
-                                messageChain = if (index % 2 == 0){
+                            for ((index, element) in titleNameSplit.withIndex()) {
+                                messageChain = if (index % 2 == 0) {
                                     messageChain.plus("\uD83D\uDC66\uD83C\uDFFB") //Boy
-                                } else{
+                                } else {
                                     messageChain.plus("\uD83D\uDC67\uD83C\uDFFB") //Girl
                                 }
                                 messageChain = messageChain.plus("<‹${element.trim()}›>")
-                                if (index != titleNameSplit.size - 1){
+                                if (index != titleNameSplit.size - 1) {
                                     messageChain = messageChain.plus("｜")
                                 }
                             }
                             messageChain = messageChain
                                 .plus("\n")
-                        } else{
+                        } else {
                             messageChain = messageChain
                                 .plus("<‹${titleBean.titleName}›>")
                                 .plus("\n")
                         }
-                        if (titleBean.oop){
+                        if (titleBean.oop) {
                             messageChain = messageChain
                                 .plus("※ 该称号已绝版！")
                                 .plus(Face(Face.kuaikule))
@@ -56,12 +56,12 @@ fun Bot.title() {
                             .plus("关联成就：${titleBean.achievement}")
                             .plus("\n")
                             .plus("获取途径：")
-                        messageChain = if (titleBean.desc.isEmpty()){
+                        messageChain = if (titleBean.desc.isEmpty()) {
                             messageChain.plus(titleBean.descAll)
-                        } else{
+                        } else {
                             messageChain.plus(titleBean.desc)
                         }
-                        if (titleBean.aboutLink.isNotEmpty()){
+                        if (titleBean.aboutLink.isNotEmpty()) {
                             messageChain = messageChain
                                 .plus("\n")
                                 .plus("相关链接：")

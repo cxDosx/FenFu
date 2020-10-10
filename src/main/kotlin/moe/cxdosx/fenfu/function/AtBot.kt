@@ -1,9 +1,9 @@
 package moe.cxdosx.fenfu.function
 
 import moe.cxdosx.fenfu.config.FenFuText
+import moe.cxdosx.fenfu.data.QueryLogs
 import moe.cxdosx.fenfu.data.beans.LogsIdle
 import moe.cxdosx.fenfu.data.beans.LogsIdleQueue
-import moe.cxdosx.fenfu.data.QueryLogs
 import moe.cxdosx.fenfu.utils.DatabaseHelper
 import net.mamoe.mirai.Bot
 import net.mamoe.mirai.event.subscribeGroupMessages
@@ -15,7 +15,7 @@ import net.mamoe.mirai.message.data.content
 /**
  * AtBot处理Logs
  */
-fun Bot.atBotLogs(){
+fun Bot.atBotLogs() {
     subscribeGroupMessages {
         has<At> {
             if (it.target == bot.id) {

@@ -10,7 +10,7 @@ import net.mamoe.mirai.message.data.At
 /**
  * 查询logs相关
  */
-fun Bot.queryLogs(){
+fun Bot.queryLogs() {
     subscribeGroupMessages {
         Regex(FenFuText.regexMatch("logs", "log"), RegexOption.IGNORE_CASE) matching regex@{
             val msg = it.replace(" +", " ").trim()//防止憨批打两个空格

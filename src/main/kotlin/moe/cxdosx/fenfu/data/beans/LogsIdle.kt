@@ -6,5 +6,5 @@ data class LogsIdle(
     /*val sender: Long,
     val sendTime: Long,*/
     val groupMessage: GroupMessageEvent,
-    val users:ArrayList<LogsUser>
+    val users: ArrayList<LogsUser>
 )

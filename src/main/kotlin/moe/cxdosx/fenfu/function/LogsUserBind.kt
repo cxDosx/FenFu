@@ -7,7 +7,7 @@ import net.mamoe.mirai.Bot
 import net.mamoe.mirai.event.subscribeGroupMessages
 import net.mamoe.mirai.message.data.At
 
-fun Bot.userBind(){
+fun Bot.userBind() {
     subscribeGroupMessages {
         /**
          * 绑定指定角色

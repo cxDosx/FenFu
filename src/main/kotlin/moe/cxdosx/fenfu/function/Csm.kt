@@ -6,13 +6,13 @@ import net.mamoe.mirai.Bot
 import net.mamoe.mirai.event.subscribeGroupMessages
 import net.mamoe.mirai.message.data.At
 
-fun Bot.csm(){
+fun Bot.csm() {
     subscribeGroupMessages {
         /**
          * 随机吃
          */
         Regex(FenFuText.randomFoodRegex, RegexOption.IGNORE_CASE) matching regex@{
-            if (sender.id != bot.id){
+            if (sender.id != bot.id) {
                 reply(At(sender) + "\n" + FenFuText.randomFood(DatabaseHelper.instance.getRandomFood()))
             }
         }
