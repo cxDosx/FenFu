@@ -48,12 +48,13 @@ object FenFuText {
         """.trimIndent()
 
     val bindHelp = """
-        使用!bind来绑定你的角色！
-        具体使用指令(*为选填)：
-        !bind 角色名 区服名*
-        当logs中没有重名玩家时无需填写区服名，绑定唯一角色
-        换绑请再次使用此命令，会自动换绑
-        解绑请使用!unbind
+        【绑定角色】
+        如：
+        ✨!bind 丝瓜卡夫卡 拂晓之间
+        如logs中没有重名玩家，区服可为空
+        完成绑定后可用!me便捷查询
+        换绑：请再次使用此命令，将自动换绑
+        解绑：请使用!unbind
     """.trimIndent()
 
     val marketHelp = """

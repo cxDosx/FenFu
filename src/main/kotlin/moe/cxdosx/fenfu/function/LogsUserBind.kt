@@ -41,12 +41,17 @@ fun Bot.userBind() {
                                 sender.id
                             )
                             reply(
-                                At(sender) + "\n" + "你已成功绑定${queryUser[0].userName} - ${queryUser[0].serverName}"
+                                At(sender) + "\n" + "你已成功绑定：${queryUser[0].userName}✿${queryUser[0].serverName}"
                             )
                         } else {
+                            DatabaseHelper.instance.updateUserBindData(
+                                queryUser[0].userName,
+                                queryUser[0].serverName,
+                                sender.id
+                            )
                             reply(
-                                At(sender) + "\n" + "你已成功将绑定角色由${queryBindUser!!.userName} - ${queryBindUser!!.serverName}" +
-                                        "改绑为${queryUser[0].userName} - ${queryUser[0].serverName}"
+                                At(sender) + "\n" + "你绑定的角色已成功变更：${queryBindUser!!.userName}✿${queryBindUser!!.serverName}" +
+                                        "=〉${queryUser[0].userName}✿${queryUser[0].serverName}"
                             )
                         }
                     }
@@ -65,12 +70,17 @@ fun Bot.userBind() {
                                 sender.id
                             )
                             reply(
-                                At(sender) + "\n" + "你已成功绑定${split[1]} - $serverName"
+                                At(sender) + "\n" + "你已成功绑定：${split[1]}✿$serverName"
                             )
                         } else {
+                            DatabaseHelper.instance.updateUserBindData(
+                                split[1],
+                                serverName,
+                                sender.id
+                            )
                             reply(
-                                At(sender) + "\n" + "你已成功将绑定角色由${queryBindUser!!.userName} - ${queryBindUser!!.serverName}" +
-                                        "改绑为${split[1]} - $serverName"
+                                At(sender) + "\n" + "你绑定的角色已成功变更：${queryBindUser!!.userName}✿${queryBindUser!!.serverName}" +
+                                        "=〉${split[1]}✿$serverName"
                             )
                         }
                     }
@@ -94,7 +104,7 @@ fun Bot.userBind() {
             val queryBindUser = DatabaseHelper.instance.queryBindUser(sender.id)
             if (queryBindUser == null) {//未绑定
                 reply(
-                    At(sender) + "\n" + "你尚未绑定任何角色，请使用!bind来绑定你的角色"
+                    At(sender) + "\n" + "诶？还没绑呢，快使用!bind告诉分福你的ID和区服"
                 )
             } else {
                 DatabaseHelper.instance.deleteBindUser(sender.id)
