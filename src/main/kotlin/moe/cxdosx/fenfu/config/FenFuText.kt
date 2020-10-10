@@ -147,7 +147,7 @@ object FenFuText {
     }
 
     fun bindUserMultiPlayer(value: String): String {
-        return "找到多个与 $value 相关的玩家\n请使用[!bind 用户名 服务器名]精确绑定"
+        return "呜呜，“${value}”太多了！分福找不到你\n请加上区服重新绑定"
     }
 
     fun unKnowServerName(value: String): String {

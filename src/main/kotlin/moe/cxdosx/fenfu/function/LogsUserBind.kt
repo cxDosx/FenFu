@@ -51,7 +51,7 @@ fun Bot.userBind() {
                             )
                             reply(
                                 At(sender) + "\n" + "你绑定的角色已成功变更：${queryBindUser!!.userName}✿${queryBindUser!!.serverName}" +
-                                        "=〉${queryUser[0].userName}✿${queryUser[0].serverName}"
+                                        " =〉${queryUser[0].userName}✿${queryUser[0].serverName}"
                             )
                         }
                     }
@@ -80,7 +80,7 @@ fun Bot.userBind() {
                             )
                             reply(
                                 At(sender) + "\n" + "你绑定的角色已成功变更：${queryBindUser!!.userName}✿${queryBindUser!!.serverName}" +
-                                        "=〉${split[1]}✿$serverName"
+                                        " =〉${split[1]}✿$serverName"
                             )
                         }
                     }
