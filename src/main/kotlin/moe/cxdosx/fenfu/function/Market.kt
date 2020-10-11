@@ -42,7 +42,7 @@ fun Bot.market() {
                             }
                             MARKET_ID_ERROR -> {
                                 reply(
-                                    At(sender) + "\n无法请求到物品ID数据，服务器可能异常，请稍后再试"
+                                    At(sender) + "\n请求物品ID数据发生了错误（90002）"
                                 )
                             }
                             else -> {
