@@ -3,6 +3,7 @@ package moe.cxdosx.fenfu.utils
 import moe.cxdosx.fenfu.config.BotConfig
 import moe.cxdosx.fenfu.config.FenFuText
 import moe.cxdosx.fenfu.data.beans.LogsUser
+import moe.cxdosx.fenfu.data.beans.TimedTaskSendBean
 import moe.cxdosx.fenfu.data.beans.TitleBean
 import moe.cxdosx.fenfu.data.beans.UserBanBean
 import java.sql.Connection
@@ -316,5 +317,38 @@ class DatabaseHelper {
             )
         }
         return banBean
+    }
+
+    fun getAllTimedTask(): List<TimedTaskSendBean> {
+        val sql = "SELECT * FROM ffxiv_timed_task WHERE available = 1"
+        val executeQuery = stmt.executeQuery(sql)
+        val taskList = ArrayList<TimedTaskSendBean>()
+        while (executeQuery.next()) {
+            val sendGroup = executeQuery.getString("sendGroup").trim()
+            val sendGroupList = ArrayList<Long>()
+            if (sendGroup.isNotEmpty()) {
+                if (sendGroup.contains(",")) {
+                    val split = sendGroup.split(",")
+                    if (split.isNotEmpty()) {
+                        split.forEach {
+                            sendGroupList.add(it.toLong())
+                        }
+                    }
+                } else {
+                    sendGroupList.add(sendGroup.toLong())
+                }
+            }
+            taskList.add(
+                TimedTaskSendBean(
+                    executeQuery.getString("content"),
+                    executeQuery.getDate("startTime"),
+                    executeQuery.getDate("endTime"),
+                    executeQuery.getString("sendTime"),
+                    sendGroupList
+                )
+            )
+
+        }
+        return taskList.toList()
     }
 }

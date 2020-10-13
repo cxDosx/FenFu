@@ -25,6 +25,8 @@ suspend fun main() {
         atBotLogs() //logs多项选择
         market() //市场查价
         title() //称号查询
+
+        TimedTask.initTimedTask(this)
     }
 
     bot.join()

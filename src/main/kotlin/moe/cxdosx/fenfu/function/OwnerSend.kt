@@ -15,5 +15,14 @@ fun Bot.ownerSend() {
                 }
             }
         }
+
+        contains("reloadTimedTask", true) {
+            if (sender.id == BotConfig.ownerQQ) {
+                TimedTask.initTimedTask(bot)
+                reply(
+                    "已重载，共${TimedTask.taskSize()}个时间"
+                )
+            }
+        }
     }
 }
