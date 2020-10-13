@@ -15,6 +15,8 @@ suspend fun main() {
     }.alsoLogin()
 
     bot.apply {
+        ownerSend()
+
         help()
         csm() //今天吃什么
         queryLogs() //logs查询
