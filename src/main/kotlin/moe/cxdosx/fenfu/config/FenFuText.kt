@@ -11,15 +11,15 @@ object FenFuText {
     const val serverError = "前方区域繁忙，请稍后再试。"
     const val logsUserQueryEmpty = "゛﹎碴璑泚亽つ。※"
     const val randomFoodRegex = ".*(吃饭|吃什么|饿了|饭点).*"
-    const val notFoundBindUser = "你还没有绑定角色，你可以使用!bind来绑定你的角色"
+    const val notFoundBindUser = "诶？还没绑呢，快使用!bind告诉分福你的ID和区服"
     val foodHelp = """
-        吃什么使用帮助：
-        你可以通过吃饭或者饿了之类的语句触发吃什么
-        常规指令(*为可选)：
-        !csm：吃什么
-        !csm add 食物名：添加一个食物名到随机列表
-        !csm fadd 食物名：强制添加一个食物(如遇列表内已存在同名食物将会被拒绝)
-        !csm list：查看当前所有食物随机列表
+        【分福的美食大全】
+        告诉分福你饿了，分福会为你精心推荐菜品^^
+        
+        相关指令：
+        ✨!csm add 食物名：添加一个食物名到随机列表
+        ✨!csm fadd 食物名：强制添加一个食物(如遇列表内已存在同名食物将会被拒绝)
+        ✨!csm list：查看当前所有食物随机列表
     """.trimIndent()
 
     /**
@@ -140,12 +140,16 @@ object FenFuText {
         return sb.toString().substring(1)
     }
 
+    /**
+     * TODO 传参保留一个版本，下个版本删除
+     */
     fun unKnowLogsQuerySplit(value: String): String {
-        return "没有找到和 $value 相关匹配的服务器或者副本\n请使用[!logs 用户名 服务器名 副本名]精确查询"
+        return "分福没听说过有这个服务器或副本"
     }
 
     fun queryLogsMultiPlayer(value: String): String {
-        return "找到多个与 $value 相关的玩家\n请使用[!logs 用户名 服务器名 副本名]精确查询"
+//        return "找到多个与 $value 相关的玩家\n请使用[!logs 用户名 服务器名 副本名]精确查询"
+        return "呜呜，“${value}”太多了！分福不知道应该是哪个玩家\n请加上区服后重新查询"
     }
 
     fun bindUserMultiPlayer(value: String): String {

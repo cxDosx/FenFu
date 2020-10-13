@@ -104,7 +104,7 @@ fun Bot.userBind() {
             val queryBindUser = DatabaseHelper.instance.queryBindUser(sender.id)
             if (queryBindUser == null) {//未绑定
                 reply(
-                    At(sender) + "\n" + "诶？还没绑呢，快使用!bind告诉分福你的ID和区服"
+                        At(sender) + "\n${FenFuText.notFoundBindUser}"
                 )
             } else {
                 DatabaseHelper.instance.deleteBindUser(sender.id)
