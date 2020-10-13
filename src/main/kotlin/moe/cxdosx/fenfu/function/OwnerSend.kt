@@ -20,7 +20,7 @@ fun Bot.ownerSend() {
             if (sender.id == BotConfig.ownerQQ) {
                 TimedTask.initTimedTask(bot)
                 reply(
-                    "已重载，共${TimedTask.taskSize()}个时间"
+                    "已重载，共${TimedTask.taskSize()}个事件"
                 )
             }
         }
