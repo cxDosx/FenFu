@@ -201,7 +201,8 @@ class QueryLogs {
             }?api_key=$API_KEY"
         )
         queryUrl.append("&zone=$zoneId")
-        if (DatabaseHelper.instance.getZoneQueryType(zoneId) == DatabaseHelper.LogsQueryType.RDPS && !hps) {
+        val zoneQueryType = DatabaseHelper.instance.getZoneQueryType(zoneId)
+        if (zoneQueryType == DatabaseHelper.LogsQueryType.RDPS && !hps) {
             queryUrl.append("&metric=rdps")
         } else if (hps) {
             queryUrl.append("&metric=hps")
@@ -283,7 +284,13 @@ class QueryLogs {
                                     userName,
                                     "UTF-8"
                                 ).toLowerCase()
-                            }#zone=$zoneId"
+                            }${
+                                if (zoneQueryType == DatabaseHelper.LogsQueryType.RDPS) {
+                                    "#zone=$zoneId"
+                                } else {
+                                    "?zone=$zoneId&new=true#zone=$zoneId"
+                                }
+                            }"
                         }】"
                     )
                     val checkBan = DatabaseHelper.instance.checkBan(userName, serverName)
