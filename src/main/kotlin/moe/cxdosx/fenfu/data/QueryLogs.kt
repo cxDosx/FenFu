@@ -283,7 +283,7 @@ class QueryLogs {
                                     userName,
                                     "UTF-8"
                                 ).toLowerCase()
-                            }"
+                            }#zone=$zoneId"
                         }】"
                     )
                     val checkBan = DatabaseHelper.instance.checkBan(userName, serverName)
