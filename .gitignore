@@ -4,3 +4,6 @@
 device.json
 # Project exclude paths
 /.gradle/
+
+# Test Folder
+/src/test/

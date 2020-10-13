@@ -286,6 +286,22 @@ class QueryLogs {
                             }"
                         }】"
                     )
+                    val checkBan = DatabaseHelper.instance.checkBan(userName, serverName)
+                    if (checkBan != null) {
+                        resultStringBuffer
+                            .append(
+                                "\n【※※该玩家曾因“${checkBan.reason}”"
+                            )
+                        if (checkBan.count > 1) {
+                            resultStringBuffer.append("及其他违规操作")
+                        }
+                        resultStringBuffer
+                            .append("被官方封禁${checkBan.count}次，")
+                            .append(
+                                "最近一次被封禁时间：${checkBan.time}，" +
+                                        "官方通告：https://ff.web.sdo.com/web8/index.html#/newstab/newscont/${checkBan.id}※※】"
+                            )
+                    }
                     return resultStringBuffer.toString()
                 }
             }

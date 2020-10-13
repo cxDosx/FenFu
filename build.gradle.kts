@@ -32,6 +32,9 @@ dependencies {
 
     // GSON
     implementation("com.google.code.gson", "gson", "2.8.6")
+
+    //Jsoup
+    implementation("org.jsoup", "jsoup", "1.12.1")
 }
 tasks.withType<KotlinCompile> {
     kotlinOptions.jvmTarget = "1.8"

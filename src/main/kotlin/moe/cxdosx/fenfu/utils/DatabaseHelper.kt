@@ -4,6 +4,7 @@ import moe.cxdosx.fenfu.config.BotConfig
 import moe.cxdosx.fenfu.config.FenFuText
 import moe.cxdosx.fenfu.data.beans.LogsUser
 import moe.cxdosx.fenfu.data.beans.TitleBean
+import moe.cxdosx.fenfu.data.beans.UserBanBean
 import java.sql.Connection
 import java.sql.DriverManager
 import java.sql.Statement
@@ -288,5 +289,32 @@ class DatabaseHelper {
             )
         }
         return null
+    }
+
+
+    /**
+     * 查询封禁
+     */
+    fun checkBan(userName: String, serverName: String): UserBanBean? {
+        val sql = "SELECT * FROM ffxiv_ban WHERE `name` = '$userName' AND `server` = '$serverName'"
+        val executeQuery = stmt.executeQuery(sql)
+        var banBean: UserBanBean? = null
+        var count = 0
+        while (executeQuery.next()) {
+            count++
+        }
+        if (count != 0) {
+            executeQuery.first()
+            banBean = UserBanBean(
+                executeQuery.getString("name"),
+                executeQuery.getString("server"),
+                executeQuery.getString("reason"),
+                executeQuery.getString("source"),
+                executeQuery.getString("time"),
+                executeQuery.getString("id"),
+                count
+            )
+        }
+        return banBean
     }
 }
