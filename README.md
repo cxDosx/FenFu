@@ -9,11 +9,3 @@
 本Bot提供FFLogs查询工具，但并不推荐使用它来出警或对他人进行攻击
 
 FFLogs仅为玩家提供分析优化战斗手法与团辅配合方面
-
-## 捐助
-请注意：所有捐助均为「个人捐赠」制度，你可以在任意时间通过交易信息来索回捐助
-
-Bot不会因为资金问题而关闭
-
-<img width="160" src="http://cxdosx.moe/donate/alipay.jpg">
-<img width="160" src="http://cxdosx.moe/donate/wechat.png">
