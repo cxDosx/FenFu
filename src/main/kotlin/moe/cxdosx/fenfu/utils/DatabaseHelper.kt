@@ -351,4 +351,32 @@ class DatabaseHelper {
         }
         return taskList.toList()
     }
+
+    /**
+     * 询Bot黑名单
+     * @param qq QQ号码
+     */
+    fun checkBlackList(qq: Long): Boolean {
+        if (qq == 0L) {
+            return false
+        }
+        val sql = "SELECT * FROM blacklist WHERE qq = '$qq'"
+        val executeQuery = stmt.executeQuery(sql)
+        return executeQuery.next()
+    }
+
+    /**
+     * 询Bot黑名单
+     * @param qq QQ号码
+     */
+    fun checkBlackList(userName: String, serverName: String): Boolean {
+        if (userName.isEmpty()) {
+            return false
+        }
+        val sql = "SELECT * FROM blacklist WHERE username = '$userName' AND serverName = '$serverName'"
+        val executeQuery = stmt.executeQuery(sql)
+        return executeQuery.next()
+    }
+
+
 }

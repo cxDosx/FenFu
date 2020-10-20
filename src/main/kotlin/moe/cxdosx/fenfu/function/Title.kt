@@ -1,6 +1,7 @@
 package moe.cxdosx.fenfu.function
 
 import moe.cxdosx.fenfu.config.FenFuText
+import moe.cxdosx.fenfu.config.checkBlackList
 import moe.cxdosx.fenfu.utils.DatabaseHelper
 import net.mamoe.mirai.Bot
 import net.mamoe.mirai.event.subscribeGroupMessages
@@ -13,6 +14,10 @@ import net.mamoe.mirai.message.data.Face
 fun Bot.title() {
     subscribeGroupMessages {
         Regex(FenFuText.regexMatch("title", "称号"), RegexOption.IGNORE_CASE) matching regex@{
+            val checkBlackList = checkBlackList()
+            if (checkBlackList) {
+                return@regex
+            }
             val msg = it.replace(" +", " ").trim()//防止憨批打两个空格
             if (msg.contains(" ")) {
                 val split = msg.split(" ")

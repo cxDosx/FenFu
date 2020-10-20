@@ -1,6 +1,7 @@
 package moe.cxdosx.fenfu.function
 
 import moe.cxdosx.fenfu.config.FenFuText
+import moe.cxdosx.fenfu.config.checkBlackList
 import moe.cxdosx.fenfu.data.QueryLogs
 import moe.cxdosx.fenfu.data.beans.LogsIdle
 import moe.cxdosx.fenfu.data.beans.LogsIdleQueue
@@ -18,6 +19,10 @@ import net.mamoe.mirai.message.data.content
 fun Bot.atBotLogs() {
     subscribeGroupMessages {
         has<At> {
+            val checkBlackList = checkBlackList()
+            if (checkBlackList) {
+                return@has
+            }
             if (it.target == bot.id) {
                 val drop = message.drop(message.size - 1)
                 val rawMessage = drop.asMessageChain().content.trim()
@@ -29,6 +34,10 @@ fun Bot.atBotLogs() {
          * 处理响应只回复数字的内容
          */
         Regex(FenFuText.matchNumber) matching regex@{
+            val checkBlackList = checkBlackList()
+            if (checkBlackList) {
+                return@regex
+            }
             queryIdleQueue(this, it)
         }
     }

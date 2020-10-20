@@ -1,6 +1,7 @@
 package moe.cxdosx.fenfu.function
 
 import moe.cxdosx.fenfu.config.FenFuText
+import moe.cxdosx.fenfu.config.checkBlackList
 import moe.cxdosx.fenfu.data.QueryLogs
 import moe.cxdosx.fenfu.utils.DatabaseHelper
 import net.mamoe.mirai.Bot
@@ -10,6 +11,10 @@ import net.mamoe.mirai.message.data.At
 fun Bot.queryHpsLogs() {
     subscribeGroupMessages {
         Regex(FenFuText.regexMatch("hps"), RegexOption.IGNORE_CASE) matching regex@{
+            val checkBlackList = checkBlackList()
+            if (checkBlackList) {
+                return@regex
+            }
             val msg = it.replace(" +", " ").trim()//防止憨批打两个空格
             if (msg.contains(" ")) {
                 val split = msg.split(" ")
@@ -53,7 +58,7 @@ fun Bot.queryHpsLogs() {
                             val bossNameQueryZone = DatabaseHelper.instance.bossNameQueryZone(split[2])
                             if (bossNameQueryZone == -1) { //没有匹配到areaId
                                 reply(
-                                    At(sender) + "\n" + FenFuText.notFoundAreaId(split[2])
+                                    At(sender) + "\n" + FenFuText.notFoundAreaId()
                                 )
                                 return@regex
                             } else { //匹配到了areaId
@@ -75,7 +80,7 @@ fun Bot.queryHpsLogs() {
                 } else if (split.size == 4) {//用户名 服务器名 还有副本名
                     val queryZone = DatabaseHelper.instance.bossNameQueryZone(split[3])
                     if (queryZone == -1) {
-                        reply(At(sender) + "\n" + FenFuText.notFoundAreaId(split[3]))
+                        reply(At(sender) + "\n" + FenFuText.notFoundAreaId())
                     } else {
                         reply(
                             At(sender) + "\n" +

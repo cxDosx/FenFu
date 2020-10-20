@@ -102,14 +102,18 @@ object FenFuText {
          ※ 支持模糊查询
     """.trimIndent()
 
+    val blackListPlayer = """
+        您的账号已被分福封禁，无法使用分福相关功能
+        如有疑问或需要申诉，请发送邮件到以下任一邮箱
+        master@cxdosx.moe
+        fenfu@cxdosx.moe
+    """.trimIndent()
+
     fun parseDataError(errMsg: String?): String {
         return "连接分福数据发生了错误（2002）${if (errMsg.isNullOrEmpty()) "" else "\n$errMsg"}"
     }
 
-    /**
-     * TODO 传参保留一个版本，下个版本删除
-     */
-    fun notFoundLogsData(userName: String, serverName: String, zoneId: Int, hps: Boolean): String {
+    fun notFoundLogsData(): String {
         return "这个人很懒，什么都没有留下。"
     }
 
@@ -117,10 +121,7 @@ object FenFuText {
         return "分福陷入了“濒死”效果，身体很虚弱，力量、灵巧、智力、精神均降低50%。\nErrMsg:Difficult Code request failed!"
     }
 
-    /**
-     * TODO 传参保留一个版本，下个版本删除
-     */
-    fun notFoundAreaId(bossOrAreaName: String): String {
+    fun notFoundAreaId(): String {
         return "分福没听说过有这个副本"
     }
 
@@ -140,10 +141,7 @@ object FenFuText {
         return sb.toString().substring(1)
     }
 
-    /**
-     * TODO 传参保留一个版本，下个版本删除
-     */
-    fun unKnowLogsQuerySplit(value: String): String {
+    fun unKnowLogsQuerySplit(): String {
         return "分福没听说过有这个服务器或副本"
     }
 
@@ -156,11 +154,7 @@ object FenFuText {
         return "呜呜，“${value}”太多了！分福找不到你\n请加上区服重新绑定"
     }
 
-    /**
-     * TODO 传参保留一个版本，下个版本删除
-     * 该参数已有空值传入
-     */
-    fun unKnowServerName(value: String): String {
+    fun unKnowServerName(): String {
         return "分福没听说过有这个服务器"
     }
 }

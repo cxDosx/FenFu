@@ -2,6 +2,7 @@ package moe.cxdosx.fenfu.function
 
 import com.google.gson.Gson
 import moe.cxdosx.fenfu.config.FenFuText
+import moe.cxdosx.fenfu.config.checkBlackList
 import moe.cxdosx.fenfu.data.beans.ItemIdQueryBean
 import moe.cxdosx.fenfu.data.beans.ItemIdResult
 import moe.cxdosx.fenfu.data.beans.MarketBean
@@ -24,6 +25,10 @@ const val defaultQueryServer = "LuXingNiao"
 fun Bot.market() {
     subscribeGroupMessages {
         Regex(FenFuText.regexMatch("market", "mitem", "查价", "价格", "市场"), RegexOption.IGNORE_CASE) matching regex@{
+            val checkBlackList = checkBlackList()
+            if (checkBlackList) {
+                return@regex
+            }
             val msg = it.replace(" +", " ").trim()//防止憨批打两个空格
             if (msg.contains(" ")) {
                 val split = msg.split(" ")
@@ -54,7 +59,7 @@ fun Bot.market() {
                     val enServerName = DatabaseHelper.instance.queryENServerName(split[2])
                     if (enServerName.isEmpty()) {
                         reply(
-                            At(sender) + "\n${FenFuText.unKnowServerName("")}"
+                            At(sender) + "\n${FenFuText.unKnowServerName()}"
                         )
                     } else { //询价
                         val item = queryItemId(split[1])

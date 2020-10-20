@@ -16,6 +16,7 @@ fun Bot.timedTask(sendBean: TimedTaskSendBean): Timer {
         schedule(TimeUtil.getNextTaskTime(sendBean.sendTime), TimeUnit.DAYS.toMillis(1)) {
             if (sendBean.endTime.time <= System.currentTimeMillis()) {
                 cancel()
+                return@schedule
             }
             launch {
                 groups.forEach {

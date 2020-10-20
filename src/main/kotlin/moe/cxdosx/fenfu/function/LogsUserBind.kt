@@ -1,6 +1,7 @@
 package moe.cxdosx.fenfu.function
 
 import moe.cxdosx.fenfu.config.FenFuText
+import moe.cxdosx.fenfu.config.checkBlackList
 import moe.cxdosx.fenfu.data.QueryLogs
 import moe.cxdosx.fenfu.utils.DatabaseHelper
 import net.mamoe.mirai.Bot
@@ -13,6 +14,10 @@ fun Bot.userBind() {
          * 绑定指定角色
          */
         Regex(FenFuText.regexMatch("bind", "绑定"), RegexOption.IGNORE_CASE) matching regex@{
+            val checkBlackList = checkBlackList()
+            if (checkBlackList) {
+                return@regex
+            }
             val msg = it.replace(" +", " ").trim()//防止憨批打两个空格
             if (msg.contains(" ")) {
                 val split = msg.split(" ")
@@ -59,7 +64,7 @@ fun Bot.userBind() {
                     val serverName = DatabaseHelper.instance.queryIntactServerName(split[2])
                     if (serverName.isEmpty()) {
                         reply(
-                            At(sender) + "\n" + FenFuText.unKnowServerName(split[2])
+                            At(sender) + "\n" + FenFuText.unKnowServerName()
                         )
                     } else {
                         val queryBindUser = DatabaseHelper.instance.queryBindUser(sender.id)
@@ -101,10 +106,14 @@ fun Bot.userBind() {
          * 解绑角色
          */
         Regex(FenFuText.regexMatch("unbind", "解绑"), RegexOption.IGNORE_CASE) matching regex@{
+            val checkBlackList = checkBlackList()
+            if (checkBlackList) {
+                return@regex
+            }
             val queryBindUser = DatabaseHelper.instance.queryBindUser(sender.id)
             if (queryBindUser == null) {//未绑定
                 reply(
-                        At(sender) + "\n${FenFuText.notFoundBindUser}"
+                    At(sender) + "\n${FenFuText.notFoundBindUser}"
                 )
             } else {
                 DatabaseHelper.instance.deleteBindUser(sender.id)
@@ -118,6 +127,10 @@ fun Bot.userBind() {
          * 查询已绑定角色logs
          */
         Regex(FenFuText.regexMatch("me"), RegexOption.IGNORE_CASE) matching regex@{
+            val checkBlackList = checkBlackList()
+            if (checkBlackList) {
+                return@regex
+            }
             val msg = it.replace(" +", " ").trim()//防止憨批打两个空格
             val queryBindUser = DatabaseHelper.instance.queryBindUser(sender.id)
             if (queryBindUser == null) {
@@ -130,7 +143,7 @@ fun Bot.userBind() {
                 val split = msg.split(" ")
                 val queryZone = DatabaseHelper.instance.bossNameQueryZone(split[1])
                 if (queryZone == -1) {
-                    reply(FenFuText.notFoundAreaId(split[1]))
+                    reply(FenFuText.notFoundAreaId())
                 } else {
                     reply(
                         At(sender) + "\n" +
@@ -158,6 +171,10 @@ fun Bot.userBind() {
          * 查询已绑定角色hps
          */
         Regex(FenFuText.regexMatch("mehps", "hpsme"), RegexOption.IGNORE_CASE) matching regex@{
+            val checkBlackList = checkBlackList()
+            if (checkBlackList) {
+                return@regex
+            }
             val msg = it.replace(" +", " ").trim()//防止憨批打两个空格
             val queryBindUser = DatabaseHelper.instance.queryBindUser(sender.id)
             if (queryBindUser == null) {
@@ -170,7 +187,7 @@ fun Bot.userBind() {
                 val split = msg.split(" ")
                 val queryZone = DatabaseHelper.instance.bossNameQueryZone(split[1])
                 if (queryZone == -1) {
-                    reply(FenFuText.notFoundAreaId(split[1]))
+                    reply(FenFuText.notFoundAreaId())
                 } else {
                     reply(
                         At(sender) + "\n" +

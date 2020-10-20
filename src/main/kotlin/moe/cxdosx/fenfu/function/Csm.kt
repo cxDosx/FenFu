@@ -1,6 +1,7 @@
 package moe.cxdosx.fenfu.function
 
 import moe.cxdosx.fenfu.config.FenFuText
+import moe.cxdosx.fenfu.config.checkBlackList
 import moe.cxdosx.fenfu.utils.DatabaseHelper
 import net.mamoe.mirai.Bot
 import net.mamoe.mirai.event.subscribeGroupMessages
@@ -12,6 +13,10 @@ fun Bot.csm() {
          * 随机吃
          */
         Regex(FenFuText.randomFoodRegex, RegexOption.IGNORE_CASE) matching regex@{
+            val checkBlackList = checkBlackList(false)
+            if (checkBlackList) {
+                return@regex
+            }
             if (sender.id != bot.id) {
                 reply(FenFuText.randomFood(sender, DatabaseHelper.instance.getRandomFood()).asMessageChain())
             }
@@ -21,6 +26,10 @@ fun Bot.csm() {
          * csm 系列命令
          */
         Regex(FenFuText.regexMatch("csm"), RegexOption.IGNORE_CASE) matching regex@{
+            val checkBlackList = checkBlackList()
+            if (checkBlackList) {
+                return@regex
+            }
             val msg = it.replace(" +", " ").trim()//防止憨批打两个空格
             if (msg.contains(" ")) {
                 val split = msg.split(" ")

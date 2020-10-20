@@ -195,13 +195,57 @@ class QueryLogs {
         if (zoneId == -1) {
             return FenFuText.parseDataError("AreaId = -1")
         }
+        val zoneQueryType = DatabaseHelper.instance.getZoneQueryType(zoneId)
+        val checkBlackList = DatabaseHelper.instance.checkBlackList(userName, serverName)
+        val resultStringBuffer = StringBuffer()
+        if (checkBlackList) {
+            resultStringBuffer
+                .append("您查询的玩家已被分福Bot拉入黑名单，如有疑问或申诉请发送邮件到以下任一邮箱\n")
+                .append("master@cxdosx.moe\nfenfu@cxdosx.moe\n")
+                .append("你可以通过下方的logs链接直达，分福暂不提供该玩家的任何logs数据展示")
+
+            resultStringBuffer.append(
+                "\n【直达logs->${
+                    "https://cn.fflogs.com/character/cn/${
+                        URLEncoder.encode(serverName, "UTF-8").toLowerCase()
+                    }/${
+                        URLEncoder.encode(
+                            userName,
+                            "UTF-8"
+                        ).toLowerCase()
+                    }${
+                        if (zoneQueryType == DatabaseHelper.LogsQueryType.RDPS) {
+                            "#zone=$zoneId"
+                        } else {
+                            "?zone=$zoneId&new=true#zone=$zoneId"
+                        }
+                    }"
+                }】"
+            )
+            val checkBan = DatabaseHelper.instance.checkBan(userName, serverName)
+            if (checkBan != null) {
+                resultStringBuffer
+                    .append(
+                        "\n【※※该玩家曾因“${checkBan.reason}”"
+                    )
+                if (checkBan.count > 1) {
+                    resultStringBuffer.append("及其他违规操作")
+                }
+                resultStringBuffer
+                    .append("被官方封禁${checkBan.count}次，")
+                    .append(
+                        "最近一次被封禁时间：${checkBan.time}，" +
+                                "官方通告：https://ff.web.sdo.com/web8/index.html#/newstab/newscont/${checkBan.id}※※】"
+                    )
+            }
+            return resultStringBuffer.toString()
+        }
         val queryUrl = StringBuffer(
             "https://cn.fflogs.com/v1/rankings/character/$userName/$serverName/${
                 DatabaseHelper.instance.logsQueryRegion(serverName)
             }?api_key=$API_KEY"
         )
         queryUrl.append("&zone=$zoneId")
-        val zoneQueryType = DatabaseHelper.instance.getZoneQueryType(zoneId)
         if (zoneQueryType == DatabaseHelper.LogsQueryType.RDPS && !hps) {
             queryUrl.append("&metric=rdps")
         } else if (hps) {
@@ -214,7 +258,7 @@ class QueryLogs {
         }
         val response = HttpUtil.client.newCall(request.build()).execute()
         if (response.code == 400) {
-            return FenFuText.notFoundLogsData(userName, serverName, zoneId, hps) + "\n${response.body?.string()}"
+            return FenFuText.notFoundLogsData() + "\n${response.body?.string()}"
         }
         if (response.isSuccessful && response.body != null) {
             val str = response.body?.string()
@@ -244,9 +288,10 @@ class QueryLogs {
                     logsData.remove(e)
                 }
                 if (logsData.isEmpty()) {
-                    return FenFuText.notFoundLogsData(userName, serverName, zoneId, hps)
+                    return FenFuText.notFoundLogsData()
                 } else {
-                    val resultStringBuffer = StringBuffer(
+                    resultStringBuffer.setLength(0)
+                    resultStringBuffer.append(
                         "$userName - $serverName 的战斗报告\n区域：${
                             DatabaseHelper.instance.zoneIdQueryDungeonName(zoneId)
                         }"
