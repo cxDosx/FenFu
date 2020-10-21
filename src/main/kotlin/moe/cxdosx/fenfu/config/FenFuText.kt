@@ -11,6 +11,7 @@ object FenFuText {
     const val serverError = "前方区域繁忙，请稍后再试。"
     const val logsUserQueryEmpty = "゛﹎碴璑泚亽つ。※"
     const val randomFoodRegex = ".*(吃饭|吃什么|饿了|饭点).*"
+    const val setuRegex = ".*(手冲|射了).*"
     const val notFoundBindUser = "诶？还没绑呢，快使用!bind告诉分福你的ID和区服"
     val foodHelp = """
         【分福的美食大全】

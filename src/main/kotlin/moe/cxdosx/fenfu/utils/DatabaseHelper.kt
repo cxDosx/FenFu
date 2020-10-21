@@ -378,5 +378,17 @@ class DatabaseHelper {
         return executeQuery.next()
     }
 
+    fun checkSeTuEnable(): Boolean {
+        val sql = "SELECT * FROM config WHERE type = 'setu'"
+        val executeQuery = stmt.executeQuery(sql)
+        while (executeQuery.next()) {
+            return executeQuery.getInt("enable") == 1
+        }
+        return false
+    }
 
+    fun switchSeTuEnable(enable: Int) {
+        val sql = "UPDATE config SET `enable` = $enable WHERE `type` = 'setu'"
+        stmt.execute(sql)
+    }
 }
