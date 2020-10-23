@@ -11,8 +11,6 @@ import net.mamoe.mirai.event.subscribeGroupMessages
 import net.mamoe.mirai.message.recallIn
 import okhttp3.Request
 import java.io.InputStream
-import kotlin.random.Random
-import kotlin.random.nextInt
 
 fun Bot.seTu() {
     subscribeGroupMessages {
@@ -34,20 +32,16 @@ fun Bot.seTu() {
  */
 private fun getRandomSeTuImage(): String {
     val req = Request.Builder().url(
-        "https://konachan.com/post.json?tag=r18&page=${
-            Random(System.currentTimeMillis()).nextInt(
-                IntRange(
-                    1,
-                    100
-                )
-            )
-        }&limit=1"
+        "https://konachan.com/post.json?limit=1&tags=order:random%20rating:explicit"
     ).build()
     val execute = HttpUtil.client.newCall(req).execute()
     return if (execute.isSuccessful && execute.body != null) {
         var body = execute.body!!.string()
         body = body.substring(1, body.length - 1)
         val json = Gson().fromJson(body, KonachanPostBean::class.java)
+        if (json.created_at < 1546272000) { //过滤2019年之前的图片
+            getRandomSeTuImage() // 重新获取图片
+        }
         json.sample_url
     } else {
         ""
