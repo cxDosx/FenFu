@@ -6,11 +6,11 @@ import moe.cxdosx.fenfu.config.checkBlackList
 import moe.cxdosx.fenfu.data.beans.KonachanPostBean
 import moe.cxdosx.fenfu.utils.DatabaseHelper
 import moe.cxdosx.fenfu.utils.HttpUtil
+import moe.cxdosx.fenfu.utils.MiraiUtil
 import net.mamoe.mirai.Bot
 import net.mamoe.mirai.event.subscribeGroupMessages
 import net.mamoe.mirai.message.recallIn
 import okhttp3.Request
-import java.io.InputStream
 
 fun Bot.seTu() {
     subscribeGroupMessages {
@@ -20,7 +20,7 @@ fun Bot.seTu() {
                 return@regex
             }
             if (sender.id != bot.id && DatabaseHelper.instance.checkSeTuEnable()) {
-                getImageInputStream(getRandomSeTuImage())?.sendAsImage()?.recallIn(30 * 1000)
+                MiraiUtil.getImageInputStream(getRandomSeTuImage())?.sendAsImage()?.recallIn(30 * 1000)
             }
         }
     }
@@ -48,14 +48,4 @@ private fun getRandomSeTuImage(): String {
     }
 }
 
-private fun getImageInputStream(imageUrl: String): InputStream? {
-    if (imageUrl.isEmpty()) {
-        return null
-    }
-    val execute = HttpUtil.client.newCall(Request.Builder().url(imageUrl).build()).execute()
-    return if (execute.isSuccessful && execute.body != null) {
-        execute.body!!.byteStream()
-    } else {
-        null
-    }
-}
+

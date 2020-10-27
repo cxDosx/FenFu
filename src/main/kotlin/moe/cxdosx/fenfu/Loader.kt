@@ -27,6 +27,7 @@ suspend fun main() {
         title() //称号查询
         ping()
         seTu()
+        weiboAutoUpdate()
 
         TimedTask.initTimedTask(this)
     }

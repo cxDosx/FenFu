@@ -367,7 +367,6 @@ class DatabaseHelper {
 
     /**
      * 询Bot黑名单
-     * @param qq QQ号码
      */
     fun checkBlackList(userName: String, serverName: String): Boolean {
         if (userName.isEmpty()) {
@@ -389,6 +388,47 @@ class DatabaseHelper {
 
     fun switchSeTuEnable(enable: Int) {
         val sql = "UPDATE config SET `enable` = $enable WHERE `type` = 'setu'"
+        stmt.execute(sql)
+    }
+
+    fun getAllWeiboUpdateUid(): List<String> {
+        val sql = "SELECT distinct weiboUID FROM weibo_auto_update"
+        val executeQuery = stmt.executeQuery(sql)
+        val result = ArrayList<String>()
+        while (executeQuery.next()) {
+            result.add(executeQuery.getString("weiboUID"))
+        }
+        return result
+    }
+
+    /**
+     * 检查是否发送过微博
+     * @param wbId weibo唯一标识ID
+     *
+     * @return 是否已发送过
+     */
+    fun checkSentWeibo(wbId: String): Boolean {
+        val sql = "SELECT wbId FROM weibo_history WHERE wbId = $wbId LIMIT 1"
+        val executeQuery = stmt.executeQuery(sql)
+        return executeQuery.next()
+    }
+
+    /**
+     * 获取所有订阅了这个微博id的群组
+     * @param userId 微博userId
+     */
+    fun getAllSubscribeWeiboIdGroups(userId: String): List<String> {
+        val sql = "SELECT `group` FROM weibo_auto_update WHERE weiboUID = $userId"
+        val executeQuery = stmt.executeQuery(sql)
+        val result = ArrayList<String>()
+        while (executeQuery.next()) {
+            result.add(executeQuery.getString("group"))
+        }
+        return result
+    }
+
+    fun saveWeiboSentHistoryId(wbId: String) {
+        val sql = "INSERT INTO `weibo_history`(`wbId`) VALUES ('${wbId}')"
         stmt.execute(sql)
     }
 }
