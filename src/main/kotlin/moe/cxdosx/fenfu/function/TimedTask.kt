@@ -13,7 +13,7 @@ import kotlin.concurrent.schedule
 fun Bot.timedTask(sendBean: TimedTaskSendBean): Timer {
 
     return Timer().apply {
-        schedule(TimeUtil.getNextTaskTime(sendBean.sendTime), TimeUnit.DAYS.toMillis(1)) {
+        schedule(TimeUtil.getNextTaskTime(sendBean.startTime, sendBean.sendTime), TimeUnit.DAYS.toMillis(1)) {
             if (sendBean.endTime.time <= System.currentTimeMillis()) {
                 cancel()
                 return@schedule

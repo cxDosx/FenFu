@@ -7,9 +7,12 @@ object TimeUtil {
      * 获取下一次消息发送时间
      * @param sendTime 发送时间，24小时制，样式类似于12/30意为12点30分
      */
-    fun getNextTaskTime(sendTime: String): Date {
+    fun getNextTaskTime(startTime: Date, sendTime: String): Date {
         val timeSplit = sendTime.split("/")
         val instance = Calendar.getInstance()
+        if (instance.timeInMillis < startTime.time) {
+            instance.time = startTime
+        }
         when {
             timeSplit[0].toInt() < instance.get(Calendar.HOUR_OF_DAY) -> {
                 //今天不发
