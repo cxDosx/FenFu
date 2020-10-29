@@ -344,8 +344,8 @@ class DatabaseHelper {
             taskList.add(
                 TimedTaskSendBean(
                     executeQuery.getString("content"),
-                    executeQuery.getDate("startTime"),
-                    executeQuery.getDate("endTime"),
+                    Date(executeQuery.getTimestamp("startTime").time),
+                    Date(executeQuery.getTimestamp("endTime").time),
                     executeQuery.getString("sendTime"),
                     sendGroupList
                 )
