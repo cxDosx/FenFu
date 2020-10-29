@@ -28,6 +28,7 @@ suspend fun main() {
         ping()
         seTu()
         weiboAutoUpdate()
+        timeManager()
 
         TimedTask.initTimedTask(this)
     }

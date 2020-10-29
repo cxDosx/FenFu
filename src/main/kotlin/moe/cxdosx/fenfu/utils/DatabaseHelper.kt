@@ -7,8 +7,11 @@ import moe.cxdosx.fenfu.data.beans.TimedTaskSendBean
 import moe.cxdosx.fenfu.data.beans.TitleBean
 import moe.cxdosx.fenfu.data.beans.UserBanBean
 import java.sql.Connection
+import java.sql.Date
 import java.sql.DriverManager
 import java.sql.Statement
+import java.util.*
+import kotlin.collections.ArrayList
 
 class DatabaseHelper {
     companion object {
@@ -429,6 +432,43 @@ class DatabaseHelper {
 
     fun saveWeiboSentHistoryId(wbId: String) {
         val sql = "INSERT INTO `weibo_history`(`wbId`) VALUES ('${wbId}')"
+        stmt.execute(sql)
+    }
+
+    fun isTimeManagerGroup(groupId: Long): Boolean {
+        val sql = "SELECT * FROM `time_manager_group` WHERE `group` = $groupId LIMIT 1"
+        val executeQuery = stmt.executeQuery(sql)
+        return executeQuery.next()
+    }
+
+    fun getTimeManagerStartTime(groupId: Long): Date? {
+        val sql = "SELECT `start_time` FROM `time_manager_group` WHERE `group` = $groupId LIMIT 1"
+        val executeQuery = stmt.executeQuery(sql)
+        return if (executeQuery.next()) {
+            Date(executeQuery.getTimestamp("start_time").time)
+        } else {
+            null
+        }
+    }
+
+    fun markTimeManagerLog(groupId: Long, userId: Long, timeChange: Int) {
+        val sql =
+            "INSERT INTO `time_manager_logs`(`group`, `user`, `time_change`) VALUES ($groupId, $userId, $timeChange)"
+        stmt.execute(sql)
+    }
+
+    fun getAfterMeasureTimeManagerDate(calendar: Calendar, groupId: Long): Calendar {
+        val sql = "SELECT time_change FROM time_manager_logs WHERE `group` = $groupId"
+        val executeQuery = stmt.executeQuery(sql)
+        while (executeQuery.next()) {
+            val int = executeQuery.getInt("time_change")
+            calendar.add(Calendar.MINUTE, int)
+        }
+        return calendar
+    }
+
+    fun deleteTimeManagerLog(targetGroup: Long) {
+        val sql = "DELETE FROM `time_manager_logs` WHERE `group` = $targetGroup"
         stmt.execute(sql)
     }
 }
