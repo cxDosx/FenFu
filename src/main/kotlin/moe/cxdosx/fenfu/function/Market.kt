@@ -113,7 +113,7 @@ private fun queryItemId(item: String): ItemIdResult {
     itemName = itemName.replace("hq", "")
     itemName = itemName.replace("nq", "")
     val queryUrl =
-        "https://cafemaker.wakingsands.com/search?indexes=item&filters=ItemSearchCategory.ID>=1&columns=ID,Icon,Name&string=$itemName&limit=1&sort_field=LevelItem"
+        "https://cafemaker.wakingsands.com/search?indexes=item&filters=ItemSearchCategory.ID>=1&columns=ID,Icon,Name&string=$itemName&limit=1"
     val request = Request.Builder()
         .url(queryUrl)
         .build()
