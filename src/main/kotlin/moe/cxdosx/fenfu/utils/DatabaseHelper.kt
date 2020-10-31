@@ -460,11 +460,15 @@ class DatabaseHelper {
     fun getAfterMeasureTimeManagerDate(calendar: Calendar, groupId: Long): Calendar {
         val sql = "SELECT time_change FROM time_manager_logs WHERE `group` = $groupId"
         val executeQuery = stmt.executeQuery(sql)
+        val currentCalendar = Calendar.getInstance()
+        currentCalendar.set(Calendar.MINUTE, calendar.get(Calendar.MINUTE))
+        currentCalendar.set(Calendar.HOUR_OF_DAY, calendar.get(Calendar.HOUR_OF_DAY))
+        currentCalendar.set(Calendar.SECOND, calendar.get(Calendar.SECOND))
         while (executeQuery.next()) {
             val int = executeQuery.getInt("time_change")
-            calendar.add(Calendar.MINUTE, int)
+            currentCalendar.add(Calendar.MINUTE, int)
         }
-        return calendar
+        return currentCalendar
     }
 
     fun deleteTimeManagerLog(targetGroup: Long) {

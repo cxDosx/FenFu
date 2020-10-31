@@ -105,13 +105,15 @@ suspend fun parseManager(isLateTime: Boolean, event: GroupMessageEvent) {
             resultStr.toInt()
         }
     }
-    DatabaseHelper.instance.markTimeManagerLog(
-        event.group.id,
-        event.sender.id,
-        if (isLateTime) resultTime else resultTime * -1
-    )
+    if (resultTime != 0) {
+        DatabaseHelper.instance.markTimeManagerLog(
+            event.group.id,
+            event.sender.id,
+            if (isLateTime) resultTime else resultTime * -1
+        )
 
-    refreshGroupName(event.group)
+        refreshGroupName(event.group)
+    }
 }
 
 fun refreshGroupName(group: Group) {
