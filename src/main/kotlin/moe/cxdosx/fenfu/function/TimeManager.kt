@@ -124,9 +124,8 @@ fun refreshGroupName(group: Group) {
         val afterMeasureTimeManagerDate =
             DatabaseHelper.instance.getAfterMeasureTimeManagerDate(calendar, group.id)
         val groupName = group.name
-        val d1 = calendar.get(Calendar.DAY_OF_MONTH)
         val d2 = afterMeasureTimeManagerDate.get(Calendar.DAY_OF_MONTH)
-        if (d1 == d2) {
+        if (Calendar.getInstance().get(Calendar.DAY_OF_MONTH) == d2) {
             val dateFormat = SimpleDateFormat("HH:mm")
             if (groupName.contains("]")) {
                 val indexOf = groupName.indexOf("]")
