@@ -40,9 +40,9 @@ class Ping(private val event: GroupMessageEvent, private val preMessage: Message
     }
 
     suspend fun ping() {
-        preMessage.recall()
         val baiduTest = baiduTest()
         val logsTest = logsTest()
+        preMessage.recall()
         event.reply(
             At(event.sender) + "\n" +
                     "FFlogsCN的连通性：${if (logsTest > timeout) "无效" else "有效"}  Time：${if (logsTest > errorTime) "不可用" else logsTest}\n" +
