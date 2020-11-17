@@ -138,6 +138,7 @@ suspend fun GroupMessageEvent.cleanDataFrom5173(serverName: String, num: Double,
             goldPriceList.add(pricePreOneYuan.toDouble())
         }
         val goldAvg = (goldPriceList.toList().stream().mapToDouble { it }.average().asDouble * 100).roundToInt() / 100
+        DatabaseHelper.instance.markGoldPriceLog(this)
         reply(
             At(sender) + "\n" +
                     """
