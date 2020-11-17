@@ -91,6 +91,7 @@ object FenFuText {
         ✨!me
         ✨!market
         ✨!title
+        ✨!gold
         ✨饿了别叫🐴
         """.trimIndent()
 
@@ -108,6 +109,25 @@ object FenFuText {
         如有疑问或需要申诉，请发送邮件到以下任一邮箱
         master@cxdosx.moe
         fenfu@cxdosx.moe
+    """.trimIndent()
+
+    val goldPriceHelp = """
+        【金价查询】
+        本功能可能会涉及部分违反游戏协议的行为
+        分福只提供解析展示数据，不做其他相关操作
+        如因违反规定被官方封禁分福不负任何责任
+        分福同时会封禁恶意使用本功能破坏游戏环境的玩家
+        你每一次使用本功能查询的行为都将被记录在案，请悉知
+        使用方法：
+        ✨!gold 18t 陆行鸟
+        ✨!gold 300w
+        ✨!gold 鸟
+        
+        ※注：查金转糖时，只允许输入万单位
+    """.trimIndent()
+
+    val goldPriceError = """
+        无效的金额
     """.trimIndent()
 
     fun parseDataError(errMsg: String?): String {

@@ -29,6 +29,7 @@ suspend fun main() {
         seTu()
         weiboAutoUpdate()
         timeManager()
+        goldPrice()
 
         TimedTask.initTimedTask(this)
     }

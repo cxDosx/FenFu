@@ -6,6 +6,8 @@ import moe.cxdosx.fenfu.data.beans.LogsUser
 import moe.cxdosx.fenfu.data.beans.TimedTaskSendBean
 import moe.cxdosx.fenfu.data.beans.TitleBean
 import moe.cxdosx.fenfu.data.beans.UserBanBean
+import net.mamoe.mirai.message.GroupMessageEvent
+import net.mamoe.mirai.message.data.content
 import java.sql.Connection
 import java.sql.Date
 import java.sql.DriverManager
@@ -473,6 +475,13 @@ class DatabaseHelper {
 
     fun deleteTimeManagerLog(targetGroup: Long) {
         val sql = "DELETE FROM `time_manager_logs` WHERE `group` = $targetGroup"
+        stmt.execute(sql)
+    }
+
+    fun markGoldPriceLog(groupMessageEvent: GroupMessageEvent) {
+        val sql =
+            "INSERT INTO gold_price_log(`qq`, `command`, `time`) " +
+                    "VALUES ('${groupMessageEvent.sender.id}', '${groupMessageEvent.message.content}', NOW())"
         stmt.execute(sql)
     }
 }
