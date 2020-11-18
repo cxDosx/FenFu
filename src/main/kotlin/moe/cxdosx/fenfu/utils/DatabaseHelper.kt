@@ -272,13 +272,19 @@ class DatabaseHelper {
     }
 
     fun outputAllFoodName(): String {
-        val sql = "SELECT foodName FROM foods WHERE isEnable = 1"
+        val sql = "SELECT foodName FROM foods WHERE isEnable = 1 order by rand() LIMIT 30"
         val executeQuery = stmt.executeQuery(sql)
         var o = ""
         while (executeQuery.next()) {
             o += "${executeQuery.getString("foodName")} "
         }
-        return o.trim()
+        return o.trim().plus(" 等共计${getAllRandomSize()}个食物名")
+    }
+
+    fun getAllRandomSize(): Int {
+        val sql = "SELECT COUNT(foodName) FROM foods"
+        val rs = stmt.executeQuery(sql)
+        return rs.getInt(0)
     }
 
     fun queryTitle(likeName: String): TitleBean? {
