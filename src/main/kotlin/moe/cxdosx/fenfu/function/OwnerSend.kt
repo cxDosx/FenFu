@@ -1,7 +1,6 @@
 package moe.cxdosx.fenfu.function
 
 import moe.cxdosx.fenfu.config.BotConfig
-import moe.cxdosx.fenfu.config.FenFuText
 import moe.cxdosx.fenfu.utils.DatabaseHelper
 import moe.cxdosx.fenfu.utils.WeiboUpdateManager
 import net.mamoe.mirai.Bot
@@ -9,9 +8,9 @@ import net.mamoe.mirai.event.subscribeFriendMessages
 
 fun Bot.ownerSend() {
     subscribeFriendMessages {
-        Regex(FenFuText.regexMatch("sendall"), RegexOption.IGNORE_CASE) matching regex@{
+        startsWith("sendall", trim = true) {
             if (sender.id == BotConfig.ownerQQ) {
-                val msg = it.substring(it.indexOf(" ")).trim()
+                val msg = it.trim()
                 groups.forEach { group ->
                     group.sendMessage(msg)
                 }

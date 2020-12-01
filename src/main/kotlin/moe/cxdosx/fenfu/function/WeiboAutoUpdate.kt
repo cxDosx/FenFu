@@ -4,6 +4,7 @@ import com.google.gson.Gson
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
+import moe.cxdosx.fenfu.config.BotConfig
 import moe.cxdosx.fenfu.data.beans.Card
 import moe.cxdosx.fenfu.data.beans.WeiboDetailBean
 import moe.cxdosx.fenfu.data.beans.WeiboExtendBean
@@ -52,13 +53,12 @@ object WeiboAutoUpdate {
             } else {
                 null
             }
-            MiraiUtil.logger(
-                """
-                        CheckUrl=${response.request.url}
-                        Response=${response.code}
-                        Content=${rawText}
-                    """.trimIndent()
-            )
+            GlobalScope.launch(Dispatchers.IO) {
+                MiraiUtil.sendToTargetFriend(
+                    BotConfig.ownerQQ,
+                    "CheckUrl=${response.request.url}\nResponse=${response.code}"
+                )
+            }
 
         } else {
             rawText = HttpUtil.getRawText("https://m.weibo.cn/api/container/getIndex", params)
@@ -79,7 +79,7 @@ object WeiboAutoUpdate {
                             if (checkMode) {
                                 GlobalScope.launch(Dispatchers.IO) {
                                     MiraiUtil.sendToTargetFriend(
-                                        591701074L,
+                                        BotConfig.ownerQQ,
                                         """
                                             已发送过，跳过$weiboId
                                         """.trimIndent()
@@ -91,7 +91,7 @@ object WeiboAutoUpdate {
                         if (checkMode) {
                             GlobalScope.launch(Dispatchers.IO) {
                                 MiraiUtil.sendToTargetFriend(
-                                    591701074L,
+                                    BotConfig.ownerQQ,
                                     """
                                     正在装填微博数据，准备发送$weiboId
                                 """.trimIndent()
