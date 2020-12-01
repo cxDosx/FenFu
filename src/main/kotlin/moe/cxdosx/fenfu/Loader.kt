@@ -26,7 +26,7 @@ suspend fun main() {
         market() //市场查价
         title() //称号查询
         ping()
-        //weiboAutoUpdate()
+        weiboAutoUpdate()
         timeManager()
         goldPrice()
 
