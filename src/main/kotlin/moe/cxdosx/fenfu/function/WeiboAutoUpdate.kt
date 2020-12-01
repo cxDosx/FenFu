@@ -11,26 +11,19 @@ import moe.cxdosx.fenfu.data.beans.WeiboFenFuSendBean
 import moe.cxdosx.fenfu.utils.DatabaseHelper
 import moe.cxdosx.fenfu.utils.HttpUtil
 import moe.cxdosx.fenfu.utils.MiraiUtil
+import moe.cxdosx.fenfu.utils.WeiboUpdateManager
 import net.mamoe.mirai.Bot
 import net.mamoe.mirai.message.data.Image
 import net.mamoe.mirai.message.data.MessageChainBuilder
 import net.mamoe.mirai.message.uploadImage
 import org.jsoup.Jsoup
 import java.util.*
-import java.util.concurrent.TimeUnit
 import kotlin.collections.ArrayList
 import kotlin.collections.HashMap
-import kotlin.concurrent.schedule
 
 @Suppress("UNUSED")
 fun Bot.weiboAutoUpdate() {
-    Timer().apply {
-        schedule(0L, TimeUnit.MINUTES.toMillis(5)) {
-            DatabaseHelper.instance.getAllWeiboUpdateUid().forEach {
-                WeiboAutoUpdate.getAllWeiboText(it)
-            }
-        }
-    }
+    WeiboUpdateManager.initWeiboUpdate()
 }
 
 object WeiboAutoUpdate {
@@ -43,11 +36,33 @@ object WeiboAutoUpdate {
     }
 
     fun getAllWeiboText(uid: String) {
+        getAllWeiboText(uid, false)
+    }
+
+    fun getAllWeiboText(uid: String, checkMode: Boolean) {
         val params = HashMap<String, Any>()
         params["type"] = "uid"
         params["value"] = uid
         params["containerid"] = getContainerId(uid)
-        val rawText = HttpUtil.getRawText("https://m.weibo.cn/api/container/getIndex", params)
+        val rawText: String?
+        if (checkMode) {
+            val response = HttpUtil.getResponse("https://m.weibo.cn/api/container/getIndex", params)
+            rawText = if (response.isSuccessful && response.body != null) {
+                response.body!!.string()
+            } else {
+                null
+            }
+            MiraiUtil.logger(
+                """
+                        CheckUrl=${response.request.url}
+                        Response=${response.code}
+                        Content=${rawText}
+                    """.trimIndent()
+            )
+
+        } else {
+            rawText = HttpUtil.getRawText("https://m.weibo.cn/api/container/getIndex", params)
+        }
         if (!rawText.isNullOrEmpty()) {
             val detailBean = Gson().fromJson(rawText, WeiboDetailBean::class.java)
             if (detailBean.ok == 1 && detailBean.data.cards.isNotEmpty()) { //成功
@@ -61,7 +76,27 @@ object WeiboAutoUpdate {
                             return@continuing
                         }
                         if (DatabaseHelper.instance.checkSentWeibo(weiboId)) {
+                            if (checkMode) {
+                                GlobalScope.launch(Dispatchers.IO) {
+                                    MiraiUtil.sendToTargetFriend(
+                                        591701074L,
+                                        """
+                                            已发送过，跳过$weiboId
+                                        """.trimIndent()
+                                    )
+                                }
+                            }
                             return@breaking
+                        }
+                        if (checkMode) {
+                            GlobalScope.launch(Dispatchers.IO) {
+                                MiraiUtil.sendToTargetFriend(
+                                    591701074L,
+                                    """
+                                    正在装填微博数据，准备发送$weiboId
+                                """.trimIndent()
+                                )
+                            }
                         }
                         setupWeiboData(it.mblog.retweeted_status == null, weiboId, it)
                         return@breaking
@@ -119,13 +154,13 @@ object WeiboAutoUpdate {
 
 
     private fun sendWeiboUpdate(send: WeiboFenFuSendBean) {
+        DatabaseHelper.instance.saveWeiboSentHistoryId(send.weiboId)
         GlobalScope.launch(Dispatchers.IO) {
             val allSubscribeWeiboIdGroups = DatabaseHelper.instance.getAllSubscribeWeiboIdGroups(send.weiboUserId)
             if (send.weiboImage.isEmpty()) {
                 allSubscribeWeiboIdGroups.forEach {
                     MiraiUtil.sendToTargetGroup(it.toLong(), send.weiboContent.plus("\n${send.weiboOriginUrl}"))
                 }
-                DatabaseHelper.instance.saveWeiboSentHistoryId(send.weiboId)
             } else {
                 allSubscribeWeiboIdGroups.forEach { group ->
                     val targetGroup = MiraiUtil.getTargetGroup(group.toLong())
@@ -147,7 +182,6 @@ object WeiboAutoUpdate {
                     msg.append("\n${send.weiboOriginUrl}")
                     MiraiUtil.getTargetGroup(group.toLong())?.sendMessage(msg.asMessageChain())
                 }
-                DatabaseHelper.instance.saveWeiboSentHistoryId(send.weiboId)
             }
         }
 

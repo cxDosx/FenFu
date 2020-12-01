@@ -54,4 +54,10 @@ object MiraiUtil {
         }
     }
 
+    fun logger(str: String) {
+        Bot.forEachInstance {
+            it.logger.debug(str)
+        }
+    }
+
 }

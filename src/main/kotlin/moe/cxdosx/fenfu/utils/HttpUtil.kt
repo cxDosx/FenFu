@@ -2,6 +2,7 @@ package moe.cxdosx.fenfu.utils
 
 import okhttp3.OkHttpClient
 import okhttp3.Request
+import okhttp3.Response
 import java.util.concurrent.TimeUnit
 
 object HttpUtil {
@@ -20,6 +21,15 @@ object HttpUtil {
      * @return 返回响应体原文，如果请求失败返回null
      */
     fun getRawText(u: String, params: Map<String, Any>?): String? {
+        val response = getResponse(u, params)
+        return if (response.isSuccessful && response.body != null) {
+            response.body!!.string()
+        } else {
+            null
+        }
+    }
+
+    fun getResponse(u: String, params: Map<String, Any>?): Response {
         val url: String = if (params.isNullOrEmpty()) {
             u
         } else {
@@ -30,12 +40,7 @@ object HttpUtil {
             u + p.take(p.length - 1)
         }
         val request = Request.Builder().url(url).get().build()
-        val response = client.newCall(request).execute()
-        return if (response.isSuccessful && response.body != null) {
-            response.body!!.string()
-        } else {
-            null
-        }
+        return client.newCall(request).execute()
     }
 }
 

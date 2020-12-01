@@ -2,6 +2,8 @@ package moe.cxdosx.fenfu.function
 
 import moe.cxdosx.fenfu.config.BotConfig
 import moe.cxdosx.fenfu.config.FenFuText
+import moe.cxdosx.fenfu.utils.DatabaseHelper
+import moe.cxdosx.fenfu.utils.WeiboUpdateManager
 import net.mamoe.mirai.Bot
 import net.mamoe.mirai.event.subscribeFriendMessages
 
@@ -22,6 +24,31 @@ fun Bot.ownerSend() {
                 reply(
                     "已重载，共${TimedTask.taskSize()}个事件"
                 )
+            }
+        }
+
+        contains("checkweibo", true) {
+            if (sender.id == BotConfig.ownerQQ) {
+                DatabaseHelper.instance.getAllWeiboUpdateUid().forEach {
+                    WeiboAutoUpdate.getAllWeiboText(it, true)
+                }
+            }
+        }
+
+        contains("reloadWeibo", true) {
+            if (WeiboUpdateManager.weiboTimer == null) {
+                WeiboUpdateManager.initWeiboUpdate()
+            } else {
+                WeiboUpdateManager.weiboTimer!!.cancel()
+                WeiboUpdateManager.weiboTimer = null
+                WeiboUpdateManager.initWeiboUpdate()
+            }
+        }
+
+        contains("stopweibo", true) {
+            if (WeiboUpdateManager.weiboTimer != null) {
+                WeiboUpdateManager.weiboTimer!!.cancel()
+                WeiboUpdateManager.weiboTimer = null
             }
         }
     }
