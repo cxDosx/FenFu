@@ -103,7 +103,13 @@ object WeiboAutoUpdate {
                     }
                 }
 
+            } else {
+                //数据有误，停止自动获取
+                WeiboUpdateManager.stopWeiboAutoUpdate()
             }
+        } else {
+            //数据有误，停止自动获取
+            WeiboUpdateManager.stopWeiboAutoUpdate()
         }
     }
 

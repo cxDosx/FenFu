@@ -38,17 +38,13 @@ fun Bot.ownerSend() {
             if (WeiboUpdateManager.weiboTimer == null) {
                 WeiboUpdateManager.initWeiboUpdate()
             } else {
-                WeiboUpdateManager.weiboTimer!!.cancel()
-                WeiboUpdateManager.weiboTimer = null
+                WeiboUpdateManager.stopWeiboAutoUpdate()
                 WeiboUpdateManager.initWeiboUpdate()
             }
         }
 
         contains("stopweibo", true) {
-            if (WeiboUpdateManager.weiboTimer != null) {
-                WeiboUpdateManager.weiboTimer!!.cancel()
-                WeiboUpdateManager.weiboTimer = null
-            }
+            WeiboUpdateManager.stopWeiboAutoUpdate()
         }
     }
 }
