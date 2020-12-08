@@ -207,7 +207,7 @@ suspend private fun queryItemPrice(serverName: String, item: ItemIdResult, type:
         }
         stringBuffer.append("https://universalis.app/ 提供数据支持")
         event.reply(
-            At(event.sender) + "\n" + stringBuffer.toString()
+            stringBuffer.toString()
         )
     } else {
         event.reply(
