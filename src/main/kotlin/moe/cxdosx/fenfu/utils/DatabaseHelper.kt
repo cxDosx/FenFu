@@ -331,7 +331,7 @@ class DatabaseHelper {
     }
 
     fun getAllTimedTask(): List<TimedTaskSendBean> {
-        val sql = "SELECT * FROM ffxiv_timed_task WHERE available = 1"
+        val sql = "SELECT * FROM ffxiv_timed_task WHERE available = 1 AND endTime > NOW()"
         val executeQuery = stmt.executeQuery(sql)
         val taskList = ArrayList<TimedTaskSendBean>()
         while (executeQuery.next()) {
