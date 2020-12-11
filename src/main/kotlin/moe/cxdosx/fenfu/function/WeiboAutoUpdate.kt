@@ -161,6 +161,17 @@ object WeiboAutoUpdate {
 
     private fun sendWeiboUpdate(send: WeiboFenFuSendBean) {
         DatabaseHelper.instance.saveWeiboSentHistoryId(send.weiboId)
+        if (send.weiboContent.contains("微博官方唯一抽奖工具@微博抽奖平台")) {
+            GlobalScope.launch(Dispatchers.IO) {
+                MiraiUtil.sendToTargetFriend(
+                    BotConfig.ownerQQ,
+                    """
+                        发现一条微博更新，因为是抽奖公示，所以被跳过了
+                    """.trimIndent()
+                )
+            }
+            return // 微博抽奖结果不发送
+        }
         GlobalScope.launch(Dispatchers.IO) {
             val allSubscribeWeiboIdGroups = DatabaseHelper.instance.getAllSubscribeWeiboIdGroups(send.weiboUserId)
             if (send.weiboImage.isEmpty()) {
