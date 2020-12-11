@@ -476,4 +476,22 @@ class DatabaseHelper {
                     "VALUES ('${groupMessageEvent.sender.id}', '${groupMessageEvent.message.content}', NOW())"
         stmt.execute(sql)
     }
+
+    fun markWeiboUpdateGroup(groupId: Long, weiboUid: Long) {
+        if (groupId != 0L && weiboUid != 0L) {
+            val sql = "INSERT INTO `weibo_auto_update`(`group`, `weiboUID`) VALUES ('$groupId', '$weiboUid');"
+            stmt.execute(sql)
+        }
+    }
+
+    fun removeWeiboUpdate(groupId: Long, weiboUid: Long) {
+        if (groupId != 0L) {
+            val sql = "DELETE FROM weibo_auto_update WHERE `group` = $groupId"
+            if (weiboUid != 0L) {
+                stmt.execute(sql.plus(" AND `weiboUID` = $weiboUid"))
+            } else {
+                stmt.execute(sql)
+            }
+        }
+    }
 }

@@ -1,15 +1,17 @@
 package moe.cxdosx.fenfu.function
 
-import moe.cxdosx.fenfu.config.BotConfig
+import moe.cxdosx.fenfu.config.FenFuText
 import moe.cxdosx.fenfu.utils.DatabaseHelper
+import moe.cxdosx.fenfu.utils.PermissionUtils.checkAdminPermission
 import moe.cxdosx.fenfu.utils.WeiboUpdateManager
 import net.mamoe.mirai.Bot
 import net.mamoe.mirai.event.subscribeFriendMessages
+import net.mamoe.mirai.event.subscribeGroupMessages
 
 fun Bot.ownerSend() {
     subscribeFriendMessages {
         startsWith("sendall", trim = true) {
-            if (sender.id == BotConfig.ownerQQ) {
+            if (sender.id.checkAdminPermission()) {
                 val msg = it.trim()
                 groups.forEach { group ->
                     group.sendMessage(msg)
@@ -18,7 +20,7 @@ fun Bot.ownerSend() {
         }
 
         contains("reloadTimedTask", true) {
-            if (sender.id == BotConfig.ownerQQ) {
+            if (sender.id.checkAdminPermission()) {
                 TimedTask.initTimedTask(bot)
                 reply(
                     "已重载，共${TimedTask.taskSize()}个事件"
@@ -27,7 +29,7 @@ fun Bot.ownerSend() {
         }
 
         contains("checkweibo", true) {
-            if (sender.id == BotConfig.ownerQQ) {
+            if (sender.id.checkAdminPermission()) {
                 DatabaseHelper.instance.getAllWeiboUpdateUid().forEach {
                     WeiboAutoUpdate.getAllWeiboText(it, true)
                 }
@@ -45,6 +47,43 @@ fun Bot.ownerSend() {
 
         contains("stopweibo", true) {
             WeiboUpdateManager.stopWeiboAutoUpdate()
+        }
+    }
+
+    subscribeGroupMessages {
+        Regex(FenFuText.regexMatch("weibosub"), RegexOption.IGNORE_CASE) matching regex@{
+            if (sender.id.checkAdminPermission()) {
+                val msg = it.replace(" +", " ").trim().split(" ")//防止我自己憨批打两个空格
+                if (msg.size == 2) {
+                    val uid: Long = msg[1].toLong()
+                    if (uid != 0L) {
+                        DatabaseHelper.instance.markWeiboUpdateGroup(this.group.id, uid)
+                        reply(
+                            "当前群组订阅微博推送$uid"
+                        )
+                    }
+                }
+            }
+        }
+
+        Regex(FenFuText.regexMatch("weibounsub"), RegexOption.IGNORE_CASE) matching regex@{
+            if (sender.id.checkAdminPermission()) {
+                val msg = it.replace(" +", " ").trim().split(" ")//防止我自己憨批打两个空格
+                if (msg.size == 2) {
+                    val uid: Long = msg[1].toLong()
+                    if (uid != 0L) {
+                        DatabaseHelper.instance.removeWeiboUpdate(group.id, uid)
+                        reply(
+                            "当前群组取消推送$uid"
+                        )
+                    }
+                } else {
+                    DatabaseHelper.instance.removeWeiboUpdate(group.id, 0L)
+                    reply(
+                        "当前群组取消所有推送"
+                    )
+                }
+            }
         }
     }
 }
