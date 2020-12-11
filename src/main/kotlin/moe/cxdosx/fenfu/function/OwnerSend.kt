@@ -18,6 +18,23 @@ fun Bot.ownerSend() {
                 }
             }
         }
+        startsWith("send2", trim = true) {
+            if (sender.id.checkAdminPermission()) {
+                if (it.contains(" ")) {
+                    val split = it.split(" ")
+                    val targetGroup = split[0].toLong()
+                    if (targetGroup == 0L) {
+                        return@startsWith
+                    }
+                    val msg = it.substring(it.indexOf(" ")).trim()
+                    groups.forEach { group ->
+                        if (group.id == targetGroup) {
+                            group.sendMessage(msg)
+                        }
+                    }
+                }
+            }
+        }
 
         contains("reloadTimedTask", true) {
             if (sender.id.checkAdminPermission()) {
