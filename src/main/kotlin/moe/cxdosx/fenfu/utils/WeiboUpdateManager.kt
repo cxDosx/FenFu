@@ -33,7 +33,11 @@ object WeiboUpdateManager {
             weiboTimer = null
         }
         GlobalScope.launch(Dispatchers.IO) {
-            MiraiUtil.sendToTargetFriend(BotConfig.ownerQQ, "微博自动更新已停止运行")
+            MiraiUtil.sendToTargetFriend(BotConfig.ownerQQ, "微博自动更新已停止运行，十五分钟后自动重试")
+            Thread.sleep(TimeUnit.MINUTES.toMillis(15))
+            if (weiboTimer == null) {
+                initWeiboUpdate()
+            }
         }
     }
 }
