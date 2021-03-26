@@ -37,7 +37,19 @@ object WeiboAutoUpdate {
     }
 
     fun getAllWeiboText(uid: String) {
-        getAllWeiboText(uid, false)
+        try {
+            getAllWeiboText(uid, false)
+        } catch (e: Exception) {
+            GlobalScope.launch(Dispatchers.IO) {
+                MiraiUtil.sendToTargetFriend(
+                    BotConfig.ownerQQ, """
+                微博自动更新工具异常暂停：
+                ${e.localizedMessage}
+            """.trimIndent()
+                )
+            }
+            WeiboUpdateManager.stopWeiboAutoUpdate()
+        }
     }
 
     fun getAllWeiboText(uid: String, checkMode: Boolean) {
