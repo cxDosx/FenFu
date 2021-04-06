@@ -18,9 +18,12 @@ import net.mamoe.mirai.message.data.Image
 import net.mamoe.mirai.message.data.MessageChainBuilder
 import net.mamoe.mirai.message.uploadImage
 import org.jsoup.Jsoup
+import java.text.SimpleDateFormat
 import java.util.*
+import java.util.concurrent.TimeUnit
 import kotlin.collections.ArrayList
 import kotlin.collections.HashMap
+import kotlin.math.abs
 
 @Suppress("UNUSED")
 fun Bot.weiboAutoUpdate() {
@@ -143,14 +146,14 @@ object WeiboAutoUpdate {
         val rawText = HttpUtil.getRawText("https://m.weibo.cn/statuses/extend", params)
         if (!rawText.isNullOrEmpty()) {
             if (rawText.contains("客户端")) {
-                var preSendMessage = "来自@$userName 发布于 $postTime 的${if (isOriginal) "最新微博" else "转发微博"}\n"
+                var preSendMessage = "来自@$userName 发布于 ${timeFormat(postTime)} 的${if (isOriginal) "最新微博" else "转发微博"}\n"
                 preSendMessage += card.mblog.text.replace(Regex("<[^>]+>"), "")
                 preSendMessage += "\n$originUrl"
                 sendWeiboUpdate(WeiboFenFuSendBean(userId.toString(), weiboId, preSendMessage, originUrl, ArrayList()))
             } else {
                 val extendsBean = Gson().fromJson(rawText, WeiboExtendBean::class.java)
                 if (extendsBean.ok == 1 && extendsBean.data != null && extendsBean.data.ok == 1 && extendsBean.data.longTextContent.isNotEmpty()) {
-                    var message = "来自@$userName 发布于 $postTime 的${if (isOriginal) "最新微博" else "转发微博"}\n"
+                    var message = "来自@$userName 发布于 ${timeFormat(postTime)} 的${if (isOriginal) "最新微博" else "转发微博"}\n"
                     message += extendsBean.data.longTextContent
                     val document = Jsoup.parse(message)
                     val element = document.select("a[data-url]")
@@ -214,5 +217,42 @@ object WeiboAutoUpdate {
             }
         }
 
+    }
+}
+
+/**
+ * 格式化微博时间显示
+ * 返回格式为Tue Apr 06 16:01:08 +0800 2021
+ * 与本地时间对比后返回相应的时间显示
+ * @param timeStr 欲转换的时间
+ * @return 规则：1分钟内返回 刚刚
+ *              60分钟内返回 x分钟
+ *              24小时内返回 x小时
+ *              其余返回转换后的时间格式YYYY HH:mm:ss
+ */
+@Suppress("DEPRECATION")
+fun timeFormat(timeStr: String): String {
+    val convertDate = try {
+        Date(timeStr)
+    } catch (e: Exception) {
+        println(e.localizedMessage)
+        null
+    } ?: return timeStr
+    val currentDateTimeUnix = Calendar.getInstance().timeInMillis
+    val oneMinute = TimeUnit.MINUTES.toMillis(1)
+    val oneHour = TimeUnit.HOURS.toMillis(1)
+    val oneDay = TimeUnit.DAYS.toMillis(1)
+    val convertDateTimeUnix = convertDate.time
+    val timeDiff = abs(currentDateTimeUnix - convertDateTimeUnix)
+    return if (timeDiff < oneMinute) {
+        "刚刚"
+    } else if (timeDiff < oneHour) {
+        val v = timeDiff / oneMinute
+        "${v}分钟前"
+    } else if (timeDiff < oneDay) {
+        val v = timeDiff / oneHour
+        "${v}小时前"
+    } else {
+        SimpleDateFormat("YYYY HH:mm:ss").format(convertDate)
     }
 }
