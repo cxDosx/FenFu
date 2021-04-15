@@ -166,7 +166,7 @@ class DatabaseHelper {
     }
 
     fun engBossNameConvertChn(engBossName: String): String {
-        val sql = "SELECT bossNameCN FROM ffxiv_boss_info WHERE bossName = '$engBossName'"
+        val sql = "SELECT bossNameCN FROM ffxiv_boss_info WHERE bossName = '${engBossName.replace("'", "\\'")}'"
         val executeQuery = stmt.executeQuery(sql)
         if (executeQuery.next()) {
             return executeQuery.getString("bossNameCN")

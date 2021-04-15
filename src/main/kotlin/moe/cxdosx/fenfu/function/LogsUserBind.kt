@@ -210,5 +210,78 @@ fun Bot.userBind() {
                 )
             }
         }
+
+        Regex(FenFuText.regexMatch("it"), RegexOption.IGNORE_CASE) matching regex@{
+            val checkBlackList = checkBlackList()
+            if (checkBlackList) {
+                return@regex
+            }
+            val sendMessage = this.message
+            var targetQQ = 0L
+            kotlin.run breaking@{
+                sendMessage.forEach {
+                    if (it is At) {
+                        targetQQ = it.target
+                        return@breaking
+                    }
+                }
+            }
+            val msg = it.replace(" +", " ").trim()//防止憨批打两个空格
+            if (targetQQ == 0L) {
+                reply(
+                    At(sender) + "\n" +
+                            FenFuText.itHelp
+                )
+            } else {
+                val queryBindUser = DatabaseHelper.instance.queryBindUser(targetQQ)
+                if (queryBindUser == null) {
+                    reply(
+                        At(sender) + "\n" + FenFuText.notFoundTargetBindUser
+                    )
+                    return@regex
+                }
+                if (msg.contains(" ")) {
+                    val split = msg.split(" ")
+                    if (split[split.size - 1].contains("@")) {
+                        reply(
+                            At(sender) + "\n" +
+                                    QueryLogs().queryLogsData(
+                                        queryBindUser!!.userName,
+                                        queryBindUser!!.serverName,
+                                        DatabaseHelper.instance.getDefaultQueryZone()
+                                    )
+                        )
+                    } else {
+                        val queryZone = DatabaseHelper.instance.bossNameQueryZone(split[split.size - 1])
+                        if (queryZone == -1) {
+                            reply(FenFuText.notFoundAreaId())
+                        } else {
+                            reply(
+                                At(sender) + "\n" +
+                                        QueryLogs().queryLogsData(
+                                            queryBindUser!!.userName,
+                                            queryBindUser!!.serverName,
+                                            queryZone
+                                        )
+                            )
+
+                        }
+                    }
+                } else {
+                    reply(
+                        At(sender) + "\n" +
+                                QueryLogs().queryLogsData(
+                                    queryBindUser!!.userName,
+                                    queryBindUser!!.serverName,
+                                    DatabaseHelper.instance.getDefaultQueryZone()
+                                )
+                    )
+                }
+
+            }
+
+        }
     }
+
+
 }

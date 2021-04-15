@@ -12,6 +12,7 @@ object FenFuText {
     const val logsUserQueryEmpty = "゛﹎碴璑泚亽つ。※"
     const val randomFoodRegex = ".*(吃饭|吃什么|饿了|饭点).*"
     const val notFoundBindUser = "诶？还没绑呢，快使用!bind告诉分福你的ID和区服"
+    const val notFoundTargetBindUser = "诶？对方还没绑呢，快让他使用!bind告诉分福ID和区服"
     val foodHelp = """
         【分福的美食大全】
         告诉分福你饿了，分福会为你精心推荐菜品^^
@@ -20,6 +21,13 @@ object FenFuText {
         ✨!csm add 食物名：添加一个食物名到随机列表
         ✨!csm fadd 食物名：强制添加一个食物(如遇列表内已存在同名食物将会被拒绝)
         ✨!csm list：查看当前所有食物随机列表
+    """.trimIndent()
+
+    val itHelp = """
+        分福查询指定已绑定角色的logs
+        如要查询指定副本，副本名前需要多打一个空格
+        
+        ✨!it @对方 [副本名可选]
     """.trimIndent()
 
     /**
@@ -88,6 +96,7 @@ object FenFuText {
         ✨!bind
         ✨!unbind
         ✨!me
+        ✨!it
         ✨!market
         ✨!title
         ✨!gold
