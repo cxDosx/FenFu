@@ -51,7 +51,7 @@ object FenFuText {
             查询某人的dps logs：!logs 用户名 服务器名* 副本名*
             查询某人的hps logs：!hps 用户名 服务器名* 副本名*
             查询自己的dps logs：!me 副本名*
-            查询自己的hps logs：!mehps 副本名*
+            查询自己的hps logs：!hpsme 副本名*
             ※ hps为治疗职业限定
         """.trimIndent()
 

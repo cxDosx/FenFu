@@ -170,7 +170,7 @@ fun Bot.userBind() {
         /**
          * 查询已绑定角色hps
          */
-        Regex(FenFuText.regexMatch("mehps", "hpsme"), RegexOption.IGNORE_CASE) matching regex@{
+        Regex(FenFuText.regexMatch("hpsme"), RegexOption.IGNORE_CASE) matching regex@{
             val checkBlackList = checkBlackList()
             if (checkBlackList) {
                 return@regex
