@@ -25,7 +25,7 @@ dependencies {
     implementation("io.ktor:ktor-client-serialization:1.4.0")
 
     // JDBC
-    implementation("mysql", "mysql-connector-java", "5.1.38")
+    implementation("mysql", "mysql-connector-java", "8.0.11")
 
     // OKHTTP
     implementation("com.squareup.okhttp3", "okhttp", "4.8.1")
