@@ -38,20 +38,45 @@ fun Bot.market() {
                             At(sender) + "\n" + FenFuText.marketHelp
                         )
                     } else { //正常询价，默认鸟区
-                        val item = queryItemId(split[1])
-                        when (item.ID) {
-                            MARKET_ID_EMPTY -> {
-                                reply(
-                                    At(sender) + "\n没有发现包含“${split[1]}”的道具"
-                                )
+                        val itemStr = split[1].replace("；", ";")
+                        if (itemStr.contains(";")) {
+                            //查询多个价格
+                            val items = itemStr.split(";")
+                            items.forEach { itemName ->
+                                val item = queryItemId(itemName)
+                                when (item.ID) {
+                                    MARKET_ID_EMPTY -> {
+                                        reply(
+                                            At(sender) + "\n没有发现包含“${itemName}”的道具"
+                                        )
+                                    }
+                                    MARKET_ID_ERROR -> {
+                                        reply(
+                                            At(sender) + "\n请求物品ID数据发生了错误（90002），请稍后再试"
+                                        )
+                                    }
+                                    else -> {
+                                        queryItemPrice(defaultQueryServer, item, checkItemNameQueryType(itemName), this)
+                                    }
+                                }
                             }
-                            MARKET_ID_ERROR -> {
-                                reply(
-                                    At(sender) + "\n请求物品ID数据发生了错误（90002）"
-                                )
-                            }
-                            else -> {
-                                queryItemPrice(defaultQueryServer, item, checkItemNameQueryType(split[1]), this)
+                        } else {
+                            //查询单个
+                            val item = queryItemId(split[1])
+                            when (item.ID) {
+                                MARKET_ID_EMPTY -> {
+                                    reply(
+                                        At(sender) + "\n没有发现包含“${split[1]}”的道具"
+                                    )
+                                }
+                                MARKET_ID_ERROR -> {
+                                    reply(
+                                        At(sender) + "\n请求物品ID数据发生了错误（90002），请稍后再试"
+                                    )
+                                }
+                                else -> {
+                                    queryItemPrice(defaultQueryServer, item, checkItemNameQueryType(split[1]), this)
+                                }
                             }
                         }
                     }
@@ -62,22 +87,48 @@ fun Bot.market() {
                             At(sender) + "\n${FenFuText.unKnowServerName()}"
                         )
                     } else { //询价
-                        val item = queryItemId(split[1])
-                        when (item.ID) {
-                            MARKET_ID_EMPTY -> {
-                                reply(
-                                    At(sender) + "\n没有发现包含“${split[1]}”的道具"
-                                )
+                        val itemStr = split[1].replace("；", ";")
+                        if (itemStr.contains(";")) {
+                            //多个价格询价
+                            val items = itemStr.split(";")
+                            items.forEach { itemName ->
+                                val item = queryItemId(itemName)
+                                when (item.ID) {
+                                    MARKET_ID_EMPTY -> {
+                                        reply(
+                                            At(sender) + "\n没有发现包含“${itemName}”的道具"
+                                        )
+                                    }
+                                    MARKET_ID_ERROR -> {
+                                        reply(
+                                            At(sender) + "\n请求物品ID数据发生了错误（90002），请稍后再试"
+                                        )
+                                    }
+                                    else -> {
+                                        queryItemPrice(enServerName, item, checkItemNameQueryType(itemName), this)
+                                    }
+                                }
                             }
-                            MARKET_ID_ERROR -> {
-                                reply(
-                                    At(sender) + "\n请求物品ID数据发生了错误（90002）"
-                                )
-                            }
-                            else -> {
-                                queryItemPrice(enServerName, item, checkItemNameQueryType(split[1]), this)
+                        } else {
+                            //单个价格询价
+                            val item = queryItemId(split[1])
+                            when (item.ID) {
+                                MARKET_ID_EMPTY -> {
+                                    reply(
+                                        At(sender) + "\n没有发现包含“${split[1]}”的道具"
+                                    )
+                                }
+                                MARKET_ID_ERROR -> {
+                                    reply(
+                                        At(sender) + "\n请求物品ID数据发生了错误（90002），请稍后再试"
+                                    )
+                                }
+                                else -> {
+                                    queryItemPrice(enServerName, item, checkItemNameQueryType(split[1]), this)
+                                }
                             }
                         }
+
                     }
                 } else {
                     reply(

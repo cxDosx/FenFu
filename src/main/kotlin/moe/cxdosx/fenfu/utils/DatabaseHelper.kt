@@ -13,11 +13,10 @@ import java.sql.Date
 import java.sql.DriverManager
 import java.sql.Statement
 import java.util.*
-import kotlin.collections.ArrayList
 
 class DatabaseHelper {
     companion object {
-        const val JDBC_DRIVER = "com.mysql.jdbc.Driver"
+        const val JDBC_DRIVER = "com.mysql.cj.jdbc.Driver"
         const val MYSQL_USER_NAME = BotConfig.dbUserName
         const val MYSQL_PWD = BotConfig.dbPwd
         const val JDBC_MYSQL_URL = BotConfig.jdbcUrl

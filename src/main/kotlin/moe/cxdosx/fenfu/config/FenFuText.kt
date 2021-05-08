@@ -67,6 +67,7 @@ object FenFuText {
 
     val marketHelp = """
         查询全服板子价格工具Market
+        【现已支持批量查询，请用分号分割物品名称】
         使用方法(*为选填，默认鸟区)：
         !market 物品名称 服务器或大区名*
         你可以在物品名称前后增加大小写不定的HQ或NQ来限制搜索结果
@@ -74,6 +75,8 @@ object FenFuText {
         !market 黑天马 陆行鸟
         !mitem 邪龙怨影大剑
         !查价 卡部斯的肉hq
+        批量查询：
+        !market 翠辰砂；黑天马；3级；烟熏；鲱鱼派hq；桦木 莫古力
         命令头可用：
         !market
         !mitem
