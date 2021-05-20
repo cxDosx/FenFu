@@ -444,6 +444,23 @@ class DatabaseHelper {
         }
     }
 
+    /**
+     * 获取当前Q群是否已完成cdClear
+     * @return 已完成cdClear
+     */
+    fun getTimeManagerStatus(groupId: Long): Boolean {
+        val sql = "SELECT `cdClear` FROM `time_manager_group` WHERE `group` = $groupId LIMIT 1"
+        val executeQuery = stmt.executeQuery(sql)
+        return when {
+            executeQuery.next() -> {
+                executeQuery.getInt("cdClear") == 1
+            }
+            else -> {
+                false
+            }
+        }
+    }
+
     fun markTimeManagerLog(groupId: Long, userId: Long, timeChange: Int) {
         val sql =
             "INSERT INTO `time_manager_logs`(`group`, `user`, `time_change`) VALUES ($groupId, $userId, $timeChange)"
@@ -466,6 +483,11 @@ class DatabaseHelper {
 
     fun deleteTimeManagerLog(targetGroup: Long) {
         val sql = "DELETE FROM `time_manager_logs` WHERE `group` = $targetGroup"
+        stmt.execute(sql)
+    }
+
+    fun updateTimeManageStatus(groupId: Long, clear: Boolean) {
+        val sql = "UPDATE time_manager_group SET `cdClear` = ${if (clear) 1 else 0} WHERE `group` = $groupId"
         stmt.execute(sql)
     }
 

@@ -40,19 +40,61 @@ fun Bot.timeManager() {
             }
             DatabaseHelper.instance.deleteTimeManagerLog(group.id)
             refreshGroupName(this.group)
+
+
         }
-
-
+        Regex(FenFuText.regexMatch("cdclear", "clearcd"), RegexOption.IGNORE_CASE) matching regex@{
+            val checkBlackList = checkBlackList()
+            if (checkBlackList) {
+                return@regex
+            }
+            if (!DatabaseHelper.instance.isTimeManagerGroup(group.id)) {
+                reply(
+                    At(sender) + "\n" + """
+                        这里尚未开通这项业务~
+                    """.trimIndent()
+                )
+                return@regex
+            }
+            DatabaseHelper.instance.updateTimeManageStatus(group.id, true)
+            refreshGroupName(this.group)
+        }
+        Regex(FenFuText.regexMatch("resetclear"), RegexOption.IGNORE_CASE) matching regex@{
+            val checkBlackList = checkBlackList()
+            if (checkBlackList) {
+                return@regex
+            }
+            if (!DatabaseHelper.instance.isTimeManagerGroup(group.id)) {
+                reply(
+                    At(sender) + "\n" + """
+                        这里尚未开通这项业务~
+                    """.trimIndent()
+                )
+                return@regex
+            }
+            if (!DatabaseHelper.instance.getTimeManagerStatus(group.id)) {
+                DatabaseHelper.instance.deleteTimeManagerLog(group.id)
+                DatabaseHelper.instance.updateTimeManageStatus(group.id, false)
+                refreshGroupName(this.group)
+            }
+        }
     }
 
 
     Timer().apply {
-        schedule(TimeUtil.getNextTaskTime(Calendar.getInstance().time, "23/59"), TimeUnit.DAYS.toMillis(1)) {
+        schedule(TimeUtil.getNextTaskTime(Calendar.getInstance().time, "00/01"), TimeUnit.DAYS.toMillis(1)) {
             launch {
                 groups.forEach {
                     if (DatabaseHelper.instance.isTimeManagerGroup(it.id)) {
-                        DatabaseHelper.instance.deleteTimeManagerLog(it.id)
-                        refreshGroupName(it)
+                        if (Calendar.getInstance().get(Calendar.MONTH) == 2) {
+                            if (DatabaseHelper.instance.getTimeManagerStatus(it.id)) {
+                                DatabaseHelper.instance.updateTimeManageStatus(it.id, false)
+                            }
+                        } else if (!DatabaseHelper.instance.getTimeManagerStatus(it.id)) {
+                            DatabaseHelper.instance.deleteTimeManagerLog(it.id)
+                            refreshGroupName(it)
+                        }
+
                     }
                 }
             }
@@ -63,6 +105,16 @@ fun Bot.timeManager() {
 
 suspend fun parseManager(isLateTime: Boolean, event: GroupMessageEvent) {
     if (!DatabaseHelper.instance.isTimeManagerGroup(event.group.id)) {
+        return
+    }
+    if (DatabaseHelper.instance.getTimeManagerStatus(event.group.id)) {
+        event.reply(
+            """
+                这周的战斗已经完成了！
+                如果状态有误请使用以下指令重置~
+                ✨!resetclear
+            """.trimIndent()
+        )
         return
     }
     if (event.group.name.contains("[今天\uD83C\uDE1A]")) {
@@ -118,14 +170,33 @@ suspend fun parseManager(isLateTime: Boolean, event: GroupMessageEvent) {
 
 fun refreshGroupName(group: Group) {
     val timeManagerStartTime = DatabaseHelper.instance.getTimeManagerStartTime(group.id)
+    val cdClear = DatabaseHelper.instance.getTimeManagerStatus(group.id)
     if (timeManagerStartTime == null) {
         return
     } else {
+        val groupName = group.name
+        if (cdClear) {
+            if (groupName.contains("]")) {
+                val indexOf = groupName.indexOf("]")
+                if (indexOf == groupName.length - 1) {
+                    group.name =
+                        "[下周见]$groupName"
+                } else {
+                    group.name =
+                        "[下周见]" + groupName.substring(
+                            groupName.indexOf("]") + 1
+                        )
+                }
+            } else {
+                group.name =
+                    "[下周见]$groupName"
+            }
+            return
+        }
         val calendar = Calendar.getInstance()
         calendar.time = timeManagerStartTime
         val afterMeasureTimeManagerDate =
             DatabaseHelper.instance.getAfterMeasureTimeManagerDate(calendar, group.id)
-        val groupName = group.name
         val d2 = afterMeasureTimeManagerDate.get(Calendar.DAY_OF_MONTH)
         if (Calendar.getInstance().get(Calendar.DAY_OF_MONTH) == d2) {
             val dateFormat = SimpleDateFormat("HH:mm")
