@@ -17,6 +17,7 @@ import okhttp3.Request
 import java.text.SimpleDateFormat
 import java.util.*
 
+const val SERVER_REGION_NOT_FOUND = -3L
 const val MARKET_ID_ERROR = -2L
 const val MARKET_ID_EMPTY = -1L
 
@@ -43,41 +44,13 @@ fun Bot.market() {
                             //查询多个价格
                             val items = itemStr.split(";")
                             items.forEach { itemName ->
-                                val item = queryItemId(itemName)
-                                when (item.ID) {
-                                    MARKET_ID_EMPTY -> {
-                                        reply(
-                                            At(sender) + "\n没有发现包含“${itemName}”的道具"
-                                        )
-                                    }
-                                    MARKET_ID_ERROR -> {
-                                        reply(
-                                            At(sender) + "\n请求物品ID数据发生了错误（90002），请稍后再试"
-                                        )
-                                    }
-                                    else -> {
-                                        queryItemPrice(defaultQueryServer, item, checkItemNameQueryType(itemName), this)
-                                    }
-                                }
+                                val item = queryItemId(itemName, defaultQueryServer)
+                                checkQueryParam(item, this, defaultQueryServer, itemName)
                             }
                         } else {
                             //查询单个
-                            val item = queryItemId(split[1])
-                            when (item.ID) {
-                                MARKET_ID_EMPTY -> {
-                                    reply(
-                                        At(sender) + "\n没有发现包含“${split[1]}”的道具"
-                                    )
-                                }
-                                MARKET_ID_ERROR -> {
-                                    reply(
-                                        At(sender) + "\n请求物品ID数据发生了错误（90002），请稍后再试"
-                                    )
-                                }
-                                else -> {
-                                    queryItemPrice(defaultQueryServer, item, checkItemNameQueryType(split[1]), this)
-                                }
-                            }
+                            val item = queryItemId(split[1], defaultQueryServer)
+                            checkQueryParam(item, this, defaultQueryServer, split[1])
                         }
                     }
                 } else if (split.size == 3) { //包括服务器名
@@ -92,41 +65,13 @@ fun Bot.market() {
                             //多个价格询价
                             val items = itemStr.split(";")
                             items.forEach { itemName ->
-                                val item = queryItemId(itemName)
-                                when (item.ID) {
-                                    MARKET_ID_EMPTY -> {
-                                        reply(
-                                            At(sender) + "\n没有发现包含“${itemName}”的道具"
-                                        )
-                                    }
-                                    MARKET_ID_ERROR -> {
-                                        reply(
-                                            At(sender) + "\n请求物品ID数据发生了错误（90002），请稍后再试"
-                                        )
-                                    }
-                                    else -> {
-                                        queryItemPrice(enServerName, item, checkItemNameQueryType(itemName), this)
-                                    }
-                                }
+                                val item = queryItemId(itemName, enServerName)
+                                checkQueryParam(item, this, enServerName, itemName)
                             }
                         } else {
                             //单个价格询价
-                            val item = queryItemId(split[1])
-                            when (item.ID) {
-                                MARKET_ID_EMPTY -> {
-                                    reply(
-                                        At(sender) + "\n没有发现包含“${split[1]}”的道具"
-                                    )
-                                }
-                                MARKET_ID_ERROR -> {
-                                    reply(
-                                        At(sender) + "\n请求物品ID数据发生了错误（90002），请稍后再试"
-                                    )
-                                }
-                                else -> {
-                                    queryItemPrice(enServerName, item, checkItemNameQueryType(split[1]), this)
-                                }
-                            }
+                            val item = queryItemId(split[1], enServerName)
+                            checkQueryParam(item, this, enServerName, split[1])
                         }
 
                     }
@@ -140,6 +85,29 @@ fun Bot.market() {
                     At(sender) + "\n" + FenFuText.marketHelp
                 )
             }
+        }
+    }
+}
+
+suspend fun checkQueryParam(item: ItemIdResult, messageEvent: GroupMessageEvent, serverName: String, itemName: String) {
+    when (item.ID) {
+        MARKET_ID_EMPTY -> {
+            messageEvent.reply(
+                At(messageEvent.sender) + "\n没有发现包含“${itemName}”的道具"
+            )
+        }
+        MARKET_ID_ERROR -> {
+            messageEvent.reply(
+                At(messageEvent.sender) + "\n请求物品ID数据发生了错误（90002），请稍后再试"
+            )
+        }
+        SERVER_REGION_NOT_FOUND -> {
+            messageEvent.reply(
+                At(messageEvent.sender) + "\n找不到服务器相关信息"
+            )
+        }
+        else -> {
+            queryItemPrice(serverName, item, checkItemNameQueryType(itemName), messageEvent)
         }
     }
 }
@@ -159,12 +127,31 @@ private fun checkItemNameQueryType(name: String): MarketType {
 }
 
 
-private fun queryItemId(item: String): ItemIdResult {
+private fun queryItemId(item: String, serverName: String): ItemIdResult {
+    val serverRegion = if (serverName == defaultQueryServer) {
+        "CN"
+    } else {
+        DatabaseHelper.instance.queryServerRegion(serverName)
+    }
+    if (serverRegion.isEmpty()) {
+        return ItemIdResult(SERVER_REGION_NOT_FOUND, "", "")
+    }
+
     var itemName = item.toLowerCase()
     itemName = itemName.replace("hq", "")
     itemName = itemName.replace("nq", "")
     val queryUrl =
-        "https://cafemaker.wakingsands.com/search?indexes=item&filters=ItemSearchCategory.ID>=1&columns=ID,Icon,Name&string=$itemName&limit=1"
+        when (serverRegion) {
+            "CN" -> {
+                "https://cafemaker.wakingsands.com/search?indexes=item&filters=ItemSearchCategory.ID>=1&columns=ID,Icon,Name&string=$itemName&limit=1"
+            }
+            "JP" -> {
+                "https://xivapi.com/search?indexes=item&filters=ItemSearchCategory.ID>=1&columns=ID,Icon,Name&string=$itemName&limit=1&language=ja"
+            }
+            else -> {
+                "https://xivapi.com/search?indexes=item&filters=ItemSearchCategory.ID>=1&columns=ID,Icon,Name&string=$itemName&limit=1&language=en"
+            }
+        }
     val request = Request.Builder()
         .url(queryUrl)
         .build()

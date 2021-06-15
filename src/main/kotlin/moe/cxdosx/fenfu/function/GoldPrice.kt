@@ -57,6 +57,13 @@ fun Bot.goldPrice() {
 }
 
 private suspend fun GroupMessageEvent.parseData(goldText: String, serverEN: String) {
+    val region = DatabaseHelper.instance.queryServerRegion(serverEN)
+    if (region != "CN") {
+        reply(
+            At(sender) + "\n" + FenFuText.goldPriceHelp
+        )
+        return
+    }
     if (goldText.contains(FenFuText.regexAnything("t", "糖").toRegex())) {
         //查糖转金
         val gold = convertDouble(goldText)

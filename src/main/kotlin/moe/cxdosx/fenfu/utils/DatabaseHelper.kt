@@ -106,8 +106,25 @@ class DatabaseHelper {
             if (executeQuery.next()) {
                 return executeQuery.getString("serverNameEN")
             }
+
+            val worldQuerySql = "SELECT `WorldName` FROM ffxiv_server_info WHERE `WorldName` LIKE '%$serverName%'"
+            val worldQuery = stmt.executeQuery(worldQuerySql)
+            if (worldQuery.next()) {
+                return worldQuery.getString("WorldName")
+            }
         }
         return serverEN
+    }
+
+    fun queryServerRegion(serverNameOrWorldName: String): String {
+        val sql =
+            "SELECT `serverRegion` FROM ffxiv_server_info WHERE `WorldName` LIKE '%$serverNameOrWorldName%' OR `serverName` LIKE '%$serverNameOrWorldName%' OR `serverNameEN` LIKE '%$serverNameOrWorldName%' LIMIT 1"
+        val executeQuery = stmt.executeQuery(sql)
+        return if (executeQuery.next()) {
+            executeQuery.getString("serverRegion")
+        } else {
+            ""
+        }
     }
 
     /**
