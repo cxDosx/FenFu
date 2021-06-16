@@ -118,7 +118,7 @@ class DatabaseHelper {
 
     fun queryServerRegion(serverNameOrWorldName: String): String {
         val sql =
-            "SELECT `serverRegion` FROM ffxiv_server_info WHERE `WorldName` LIKE '%$serverNameOrWorldName%' OR `serverName` LIKE '%$serverNameOrWorldName%' OR `serverNameEN` LIKE '%$serverNameOrWorldName%' LIMIT 1"
+            "SELECT `serverRegion` FROM ffxiv_server_info WHERE `WorldName` LIKE '%$serverNameOrWorldName%' OR `serverName` LIKE '%$serverNameOrWorldName%' OR `serverNameEN` LIKE '%$serverNameOrWorldName%' OR `WorldNameEN` LIKE '%$serverNameOrWorldName%' LIMIT 1"
         val executeQuery = stmt.executeQuery(sql)
         return if (executeQuery.next()) {
             executeQuery.getString("serverRegion")
